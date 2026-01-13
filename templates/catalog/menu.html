@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>Меню - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="Меню блюд и напитков {{ COMPANY_NAME }}. Свежие продукты и вкусные блюда.">
+    <meta name="keywords" content="меню, ресторан, кафе, блюда, еда, доставка">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Меню - {{ COMPANY_NAME }}">
+    <meta property="og:description" content="Меню блюд и напитков {{ COMPANY_NAME }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+</head>
+
+<body class="menu-page">
+    <!-- Header -->
+    <header class="menu-header">
+        <h1>{{ COMPANY_NAME }}</h1>
+        <p class="subtitle">Меню</p>
+    </header>
+
+    <div class="menu-container">
+        <!-- Category Navigation -->
+        <nav class="menu-nav">
+            <a href="{% url 'catalog:menu' %}" class="menu-nav-item {% if not current_category %}active{% endif %}">
+                Все
+            </a>
+            {% for category in categories %}
+            <a href="{% url 'catalog:menu' %}?category={{ category.slug }}"
+                class="menu-nav-item {% if current_category == category.slug %}active{% endif %}">
+                {{ category.icon }} {{ category.name }}
+            </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Filter Pills -->
+        <div class="menu-filters">
+            <a href="{% url 'catalog:menu' %}?filter=popular"
+                class="menu-filter-pill {% if current_filter == 'popular' %}active{% endif %}">
+                ⭐ Популярные
+            </a>
+            <a href="{% url 'catalog:menu' %}?filter=new"
+                class="menu-filter-pill {% if current_filter == 'new' %}active{% endif %}">
+                🆕 Новинки
+            </a>
+            <a href="{% url 'catalog:menu' %}?filter=promo"
+                class="menu-filter-pill {% if current_filter == 'promo' %}active{% endif %}">
+                🔥 Акции
+            </a>
+        </div>
+
+        <!-- Products by Category -->
+        {% if products_by_category %}
+        {% for category, products in products_by_category.items %}
+        <section class="menu-category" id="category-{{ category.slug }}">
+            <!-- Category Header -->
+            <div class="menu-category-header">
+                <h2 class="menu-category-title">{{ category.name }}</h2>
+                <div class="menu-category-divider">
+                    <span class="ornament">◆</span>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="menu-grid">
+                {% for product in products %}
+                <a href="{% url 'catalog:product' product.slug %}" class="menu-card" id="product-{{ product.id }}">
+                    <!-- Badge -->
+                    {% if product.is_promotional %}
+                    <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
+                    {% elif product.is_new %}
+                    <span class="menu-card-badge new">Новинка</span>
+                    {% elif product.is_featured %}
+                    <span class="menu-card-badge popular">Хит</span>
+                    {% endif %}
+
+                    <!-- Image -->
+                    <div class="menu-card-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
+                        {% endif %}
+                    </div>
+
+                    <!-- Content -->
+                    <div class="menu-card-content">
+                        <!-- Price -->
+                        <div class="menu-card-price">
+                            {% if product.old_price %}
+                            <span class="menu-card-old-price">{{ product.old_price|floatformat:0 }}с</span>
+                            {% endif %}
+                            {{ product.price|floatformat:0 }}<span class="currency">с</span>
+                        </div>
+
+                        <!-- Name -->
+                        <h3 class="menu-card-name">{{ product.name }}</h3>
+
+                        <!-- Weight -->
+                        {% if product.weight %}
+                        <span class="menu-card-weight">{{ product.weight }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+        {% else %}
+        <!-- Empty State -->
+        <div class="menu-empty">
+            <div class="menu-empty-icon">🍽️</div>
+            <h3>Блюда не найдены</h3>
+            <p>Попробуйте выбрать другую категорию</p>
+            <a href="{% url 'catalog:menu' %}" class="menu-order-btn"
+                style="max-width: 200px; margin: var(--menu-spacing-lg) auto 0;">
+                Показать всё
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Order Button -->
+        <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+            class="menu-order-btn" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
+            Заказать в WhatsApp
+        </a>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!" class="menu-float-btn" target="_blank"
+        rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+    </a>
+
+    <!-- Bottom Navigation -->
+    <nav class="menu-nav-bottom"
+        style="display:flex;justify-content:space-around;background:var(--menu-card-bg);padding:var(--menu-spacing-md);position:fixed;bottom:0;left:0;right:0;box-shadow:0 -4px 20px var(--menu-shadow);z-index:1000;">
+        <a href="{% url 'home' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:menu' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-accent);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">🍽️</span>
+            Меню
+        </a>
+        <a href="{% url 'catalog:list' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">🛒</span>
+            Каталог
+        </a>
+        <a href="{% url 'contacts' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">📞</span>
+            Контакты
+        </a>
+    </nav>
+
+    <!-- Smooth scroll script -->
+    <script>
+        // Add padding for bottom nav
+        document.body.style.paddingBottom = '70px';
+
+        // Smooth scroll to category
+        document.querySelectorAll('.menu-nav-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href.includes('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href.split('#')[1] ? '#' + href.split('#')[1] : null);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for active nav
+        const categories = document.querySelectorAll('.menu-category');
+        const navItems = document.querySelectorAll('.menu-nav-item');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navItems.forEach(item => {
+                        if (item.href.includes(id.replace('category-', ''))) {
+                            item.classList.add('active');
+                        } else if (!item.href.includes('category=')) {
+                            // Keep "Все" active only if no category filter
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        categories.forEach(cat => observer.observe(cat));
+    </script>
+</body>
+
+</html>

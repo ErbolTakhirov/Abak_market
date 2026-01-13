@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Контакты - {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Контакты</h1>
+        <p>Свяжитесь с нами любым удобным способом</p>
+    </div>
+</section>
+
+<section class="contacts-section">
+    <div class="container">
+        <div class="contacts-grid">
+            <div class="contacts-info">
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Адрес</h3>
+                    <p>{{ COMPANY_ADDRESS }}</p>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Телефон</h3>
+                    <a href="tel:{{ COMPANY_PHONE }}">{{ COMPANY_PHONE }}</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">⏰</div>
+                    <h3>Режим работы</h3>
+                    <p>Пн-Вс: 9:00 - 21:00</p>
+                </div>
+
+                <div class="contact-card contact-card-whatsapp">
+                    <div class="contact-icon">💬</div>
+                    <h3>WhatsApp</h3>
+                    <p>Самый быстрый способ связи</p>
+                    <a href="https://wa.me/{{ COMPANY_WHATSAPP|slice:'1:' }}?text=Здравствуйте!"
+                        class="btn btn-whatsapp" target="_blank">
+                        Написать в WhatsApp
+                    </a>
+                </div>
+            </div>
+
+            <div class="contacts-map">
+                <div class="map-placeholder">
+                    <div class="map-icon">🗺️</div>
+                    <p>Карта загружается...</p>
+                    <small>{{ COMPANY_ADDRESS }}</small>
+                </div>
+                <!-- Replace with actual map embed -->
+                <!-- <iframe src="https://maps.google.com/..." frameborder="0"></iframe> -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Есть вопросы?</h2>
+            <p>Мы с радостью ответим на любые вопросы в WhatsApp!</p>
+            <a href="https://wa.me/{{ COMPANY_WHATSAPP|slice:'1:' }}?text=Здравствуйте!%20У%20меня%20есть%20вопрос"
+                class="btn btn-whatsapp btn-lg" target="_blank">
+                Задать вопрос
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

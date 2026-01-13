@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>{{ category.name }} - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="{{ category.description|default:category.name }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <style>
+        body {
+            padding-bottom: 70px;
+        }
+
+        .category-nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: var(--menu-card-bg);
+            padding: var(--menu-spacing-md);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -4px 20px var(--menu-shadow);
+            z-index: 1000;
+        }
+
+        .category-nav-bottom a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--menu-text-medium);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .category-nav-bottom a.active,
+        .category-nav-bottom a:hover {
+            color: var(--menu-accent);
+        }
+
+        .category-nav-bottom a span {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <!-- Header -->
+    <header class="menu-header">
+        <h1>{{ category.icon }} {{ category.name }}</h1>
+        {% if category.description %}
+        <p class="subtitle">{{ category.description }}</p>
+        {% endif %}
+    </header>
+
+    <div class="menu-container">
+        <!-- Back link -->
+        <div style="margin-bottom: var(--menu-spacing-md);">
+            <a href="{% url 'catalog:menu' %}"
+                style="display: inline-flex; align-items: center; gap: 8px; color: var(--menu-accent); font-weight: 600; text-decoration: none;">
+                ← Назад к меню
+            </a>
+        </div>
+
+        {% if products %}
+        <!-- Products Grid -->
+        <div class="menu-grid">
+            {% for product in products %}
+            <a href="{% url 'catalog:product' product.slug %}" class="menu-card" id="product-{{ product.id }}">
+                <!-- Badge -->
+                {% if product.is_promotional %}
+                <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
+                {% elif product.is_new %}
+                <span class="menu-card-badge new">Новинка</span>
+                {% elif product.is_featured %}
+                <span class="menu-card-badge popular">Хит</span>
+                {% endif %}
+
+                <!-- Image -->
+                <div class="menu-card-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="menu-card-content">
+                    <!-- Price -->
+                    <div class="menu-card-price">
+                        {% if product.old_price %}
+                        <span class="menu-card-old-price">{{ product.old_price|floatformat:0 }}с</span>
+                        {% endif %}
+                        {{ product.price|floatformat:0 }}<span class="currency">с</span>
+                    </div>
+
+                    <!-- Name -->
+                    <h3 class="menu-card-name">{{ product.name }}</h3>
+
+                    <!-- Weight -->
+                    {% if product.weight %}
+                    <span class="menu-card-weight">{{ product.weight }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="menu-empty">
+            <div class="menu-empty-icon">🍽️</div>
+            <h3>В этой категории пока нет товаров</h3>
+            <a href="{% url 'catalog:menu' %}" class="menu-order-btn"
+                style="max-width: 200px; margin: var(--menu-spacing-lg) auto 0;">
+                Вернуться в меню
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- WhatsApp Order Button -->
+        <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Интересует%20категория%20{{ category.name }}"
+            class="menu-order-btn" target="_blank" rel="noopener" style="margin-top: var(--menu-spacing-lg);">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.25rem;height:1.25rem;">
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
+            Заказать в WhatsApp
+        </a>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="category-nav-bottom">
+        <a href="{% url 'home' %}">
+            <span>🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:menu' %}">
+            <span>🍽️</span>
+            Меню
+        </a>
+        <a href="{% url 'catalog:list' %}">
+            <span>🛒</span>
+            Каталог
+        </a>
+        <a href="{% url 'contacts' %}">
+            <span>📞</span>
+            Контакты
+        </a>
+    </nav>
+</body>
+
+</html>

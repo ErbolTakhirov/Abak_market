@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ COMPANY_NAME }} - Свежие продукты с доставкой{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-badge">🚀 Быстрая доставка</span>
+            <h1 class="hero-title">
+                Свежие продукты<br>
+                <span class="gradient-text">с доставкой на дом</span>
+            </h1>
+            <p class="hero-description">
+                Закажите продукты и готовые блюда через WhatsApp.
+                Доставим быстро и качественно!
+            </p>
+            <div class="hero-actions">
+                <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+                    class="btn btn-primary btn-lg" target="_blank">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    Заказать в WhatsApp
+                </a>
+                <a href="{% url 'catalog:list' %}" class="btn btn-outline btn-lg">
+                    Смотреть каталог
+                </a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-image-wrapper">
+                <div class="hero-image-glow"></div>
+                <img src="{% static 'images/hero-food.png' %}" alt="Свежие продукты" loading="eager">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3>Быстрая доставка</h3>
+                <p>Доставляем заказы в течение 1-2 часов по городу</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Свежие продукты</h3>
+                <p>Только качественные и свежие продукты каждый день</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Удобный заказ</h3>
+                <p>Закажите через WhatsApp в пару кликов</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Лучшие цены</h3>
+                <p>Честные цены без накруток и скрытых платежей</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+{% if categories %}
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Категории товаров</h2>
+            <p class="section-subtitle">Выберите категорию для просмотра товаров</p>
+        </div>
+
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{% url 'catalog:category' category.slug %}" class="category-card">
+                <div class="category-icon">{{ category.icon }}</div>
+                <h3 class="category-name">{{ category.name }}</h3>
+                <span class="category-count">{{ category.products_count }} товаров</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Products Section -->
+{% if featured_products %}
+<section class="products-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Популярные товары</h2>
+            <a href="{% url 'catalog:list' %}?filter=featured" class="section-link">
+                Смотреть все →
+            </a>
+        </div>
+
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <article class="product-card">
+                {% if product.is_promotional %}
+                <span class="product-badge product-badge-promo">Акция</span>
+                {% elif product.is_new %}
+                <span class="product-badge product-badge-new">Новинка</span>
+                {% endif %}
+
+                <a href="{% url 'catalog:product' product.slug %}" class="product-image-link">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/hero-food.png' %}" alt="{{ product.name }}" class="product-image"
+                        loading="lazy">
+                    {% endif %}
+                </a>
+
+                <div class="product-content">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3 class="product-name">
+                        <a href="{% url 'catalog:product' product.slug %}">{{ product.name }}</a>
+                    </h3>
+
+                    {% if product.weight %}
+                    <span class="product-weight">{{ product.weight }}</span>
+                    {% endif %}
+
+                    <div class="product-footer">
+                        <div class="product-price">
+                            {% if product.old_price %}
+                            <span class="price-old">{{ product.old_price }} ₽</span>
+                            {% endif %}
+                            <span class="price-current">{{ product.formatted_price }}</span>
+                        </div>
+
+                        <a href="{{ product.get_whatsapp_order_url }}" class="btn btn-cart" target="_blank"
+                            aria-label="Заказать {{ product.name }}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Promo Section -->
+{% if promo_products %}
+<section class="promo-section">
+    <div class="container">
+        <div class="promo-banner">
+            <div class="promo-content">
+                <span class="promo-badge">🔥 Акции</span>
+                <h2>Специальные предложения</h2>
+                <p>Успейте заказать по выгодным ценам!</p>
+                <a href="{% url 'catalog:list' %}?filter=promo" class="btn btn-white">
+                    Все акции
+                </a>
+            </div>
+            <div class="promo-products">
+                {% for product in promo_products|slice:":3" %}
+                <a href="{% url 'catalog:product' product.slug %}" class="promo-product-card">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="{% static 'images/hero-food.png' %}" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="promo-product-info">
+                        <h4>{{ product.name }}</h4>
+                        <div class="promo-product-price">
+                            <span class="old">{{ product.old_price }} ₽</span>
+                            <span class="new">{{ product.formatted_price }}</span>
+                        </div>
+                        <span class="promo-discount">-{{ product.discount_percent }}%</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Готовы сделать заказ?</h2>
+            <p>Напишите нам в WhatsApp и получите заказ уже сегодня!</p>
+            <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+                class="btn btn-whatsapp btn-lg" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                Написать в WhatsApp
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

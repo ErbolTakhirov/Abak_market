@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - {{ COMPANY_NAME }}{% endblock %}
+{% block meta_description %}{{ product.short_description }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <div class="container">
+        <a href="{% url 'home' %}">Главная</a>
+        <span>/</span>
+        <a href="{% url 'catalog:list' %}">Каталог</a>
+        <span>/</span>
+        <a href="{% url 'catalog:category' product.category.slug %}">{{ product.category.name }}</a>
+        <span>/</span>
+        <span class="current">{{ product.name }}</span>
+    </div>
+</nav>
+
+<section class="product-detail">
+    <div class="container">
+        <div class="product-detail-grid">
+            <!-- Product Images -->
+            <div class="product-gallery">
+                <div class="product-main-image">
+                    {% if product.is_promotional %}
+                    <span class="product-badge product-badge-promo">-{{ product.discount_percent }}%</span>
+                    {% elif product.is_new %}
+                    <span class="product-badge product-badge-new">Новинка</span>
+                    {% endif %}
+
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="main-image">
+                    {% else %}
+                    <img src="{% static 'images/hero-food.png' %}" alt="{{ product.name }}" id="main-image">
+                    {% endif %}
+                </div>
+
+                {% if product.images.all %}
+                <div class="product-thumbnails">
+                    {% if product.image %}
+                    <button class="thumbnail active" onclick="changeImage('{{ product.image.url }}', this)">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </button>
+                    {% endif %}
+                    {% for img in product.images.all %}
+                    <button class="thumbnail" onclick="changeImage('{{ img.image.url }}', this)">
+                        <img src="{{ img.image.url }}" alt="{{ img.alt_text }}">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <span class="product-category-tag">{{ product.category.icon }} {{ product.category.name }}</span>
+
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                {% if product.weight %}
+                <span class="product-weight">{{ product.weight }}</span>
+                {% endif %}
+
+                <div class="product-price-block">
+                    {% if product.old_price %}
+                    <span class="price-old">{{ product.old_price }} ₽</span>
+                    <span class="price-discount">-{{ product.discount_percent }}%</span>
+                    {% endif %}
+                    <span class="price-current">{{ product.formatted_price }}</span>
+                    <span class="price-unit">/ {{ product.unit }}</span>
+                </div>
+
+                {% if product.is_available %}
+                <span class="stock-status in-stock">✓ В наличии</span>
+                {% else %}
+                <span class="stock-status out-of-stock">✕ Нет в наличии</span>
+                {% endif %}
+
+                <div class="product-description">
+                    <h3>Описание</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+
+                {% if product.ingredients %}
+                <div class="product-ingredients">
+                    <h3>Состав</h3>
+                    <p>{{ product.ingredients }}</p>
+                </div>
+                {% endif %}
+
+                {% if product.calories %}
+                <div class="product-nutrition">
+                    <h3>Пищевая ценность</h3>
+                    <p>{{ product.calories }} ккал на 100г</p>
+                </div>
+                {% endif %}
+
+                <!-- Order Actions -->
+                <div class="product-actions">
+                    <a href="{{ whatsapp_url }}" class="btn btn-whatsapp btn-lg btn-block" target="_blank">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                        </svg>
+                        Заказать в WhatsApp
+                    </a>
+
+                    <a href="tel:{{ COMPANY_PHONE }}" class="btn btn-outline btn-lg btn-block">
+                        📞 Позвонить
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="related-products">
+    <div class="container">
+        <h2 class="section-title">Похожие товары</h2>
+
+        <div class="products-grid">
+            {% for product in related_products %}
+            <article class="product-card">
+                {% if product.is_promotional %}
+                <span class="product-badge product-badge-promo">Акция</span>
+                {% endif %}
+
+                <a href="{% url 'catalog:product' product.slug %}" class="product-image-link">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/hero-food.png' %}" alt="{{ product.name }}" class="product-image"
+                        loading="lazy">
+                    {% endif %}
+                </a>
+
+                <div class="product-content">
+                    <h3 class="product-name">
+                        <a href="{% url 'catalog:product' product.slug %}">{{ product.name }}</a>
+                    </h3>
+
+                    <div class="product-footer">
+                        <div class="product-price">
+                            <span class="price-current">{{ product.formatted_price }}</span>
+                        </div>
+
+                        <a href="{{ product.get_whatsapp_order_url }}" class="btn btn-cart" target="_blank">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% block extra_js %}
+<script>
+    function changeImage(url, btn) {
+        document.getElementById('main-image').src = url;
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
+{% endblock %}
+{% endblock %}

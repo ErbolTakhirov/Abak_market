@@ -1,0 +1,12 @@
+# Robots.txt for Grocery Store
+
+User-agent: *
+Allow: /
+Allow: /catalog/
+
+# Disallow admin and API
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://{{ request.get_host }}/sitemap.xml

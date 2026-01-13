@@ -1,0 +1,584 @@
+/* ==============================================
+   RESTAURANT MENU STYLES
+   Premium Restaurant/Cafe Menu Design
+   ============================================== */
+
+/* ==============================================
+   MENU VARIABLES
+   ============================================== */
+:root {
+    /* Warm Restaurant Colors */
+    --menu-bg: #E8D4B8;
+    --menu-bg-light: #F5E6D3;
+    --menu-card-bg: #ffffff;
+    --menu-text-dark: #2C1810;
+    --menu-text-medium: #5C4033;
+    --menu-text-light: #8B7355;
+    --menu-accent: #C4956A;
+    --menu-accent-dark: #A67C52;
+    --menu-border: #D4C4A8;
+    --menu-shadow: rgba(139, 115, 85, 0.15);
+
+    /* Typography */
+    --menu-font: 'Inter', 'Segoe UI', sans-serif;
+    --menu-font-display: 'Playfair Display', 'Georgia', serif;
+
+    /* Spacing */
+    --menu-spacing-xs: 0.25rem;
+    --menu-spacing-sm: 0.5rem;
+    --menu-spacing-md: 1rem;
+    --menu-spacing-lg: 1.5rem;
+    --menu-spacing-xl: 2rem;
+
+    /* Border Radius */
+    --menu-radius: 16px;
+    --menu-radius-sm: 8px;
+}
+
+/* ==============================================
+   MENU PAGE LAYOUT
+   ============================================== */
+.menu-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--menu-bg) 0%, var(--menu-bg-light) 100%);
+    padding-bottom: var(--menu-spacing-xl);
+}
+
+.menu-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 var(--menu-spacing-md);
+}
+
+/* ==============================================
+   MENU HEADER
+   ============================================== */
+.menu-header {
+    text-align: center;
+    padding: var(--menu-spacing-xl) 0;
+    background: linear-gradient(180deg, var(--menu-accent) 0%, var(--menu-accent-dark) 100%);
+    margin-bottom: var(--menu-spacing-lg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.menu-header h1 {
+    font-family: var(--menu-font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--menu-card-bg);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.menu-header .subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: var(--menu-spacing-xs);
+}
+
+/* ==============================================
+   CATEGORY NAVIGATION
+   ============================================== */
+.menu-nav {
+    display: flex;
+    gap: var(--menu-spacing-sm);
+    padding: var(--menu-spacing-md) 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: var(--menu-spacing-lg);
+}
+
+.menu-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-nav-item {
+    flex-shrink: 0;
+    padding: var(--menu-spacing-sm) var(--menu-spacing-md);
+    background: var(--menu-card-bg);
+    border-radius: var(--menu-radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--menu-text-medium);
+    text-decoration: none;
+    box-shadow: 0 2px 8px var(--menu-shadow);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.menu-nav-item:hover,
+.menu-nav-item.active {
+    background: var(--menu-accent);
+    color: var(--menu-card-bg);
+    transform: translateY(-2px);
+}
+
+/* ==============================================
+   CATEGORY SECTION
+   ============================================== */
+.menu-category {
+    margin-bottom: var(--menu-spacing-xl);
+}
+
+.menu-category-header {
+    text-align: center;
+    margin-bottom: var(--menu-spacing-lg);
+    padding: 0 var(--menu-spacing-md);
+}
+
+.menu-category-title {
+    font-family: var(--menu-font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--menu-text-dark);
+    margin: 0;
+    position: relative;
+    display: inline-block;
+    padding-bottom: var(--menu-spacing-sm);
+}
+
+.menu-category-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--menu-text-dark) 20%,
+            var(--menu-text-dark) 80%,
+            transparent 100%);
+}
+
+/* Decorative line with ornament */
+.menu-category-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--menu-spacing-sm);
+    margin-top: var(--menu-spacing-sm);
+}
+
+.menu-category-divider::before,
+.menu-category-divider::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--menu-text-light);
+}
+
+.menu-category-divider .ornament {
+    font-size: 0.75rem;
+    color: var(--menu-text-light);
+}
+
+/* ==============================================
+   PRODUCTS GRID - 2x2 Layout
+   ============================================== */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--menu-spacing-md);
+}
+
+/* ==============================================
+   PRODUCT CARD - Restaurant Style
+   ============================================== */
+.menu-card {
+    background: var(--menu-card-bg);
+    border-radius: var(--menu-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--menu-shadow);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(139, 115, 85, 0.25);
+}
+
+/* Card Image */
+.menu-card-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--menu-bg-light);
+}
+
+.menu-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.menu-card:hover .menu-card-image img {
+    transform: scale(1.05);
+}
+
+/* Badge for special items */
+.menu-card-badge {
+    position: absolute;
+    top: var(--menu-spacing-sm);
+    left: var(--menu-spacing-sm);
+    padding: 4px 8px;
+    background: #E74C3C;
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    border-radius: var(--menu-radius-sm);
+    text-transform: uppercase;
+}
+
+.menu-card-badge.new {
+    background: #27AE60;
+}
+
+.menu-card-badge.popular {
+    background: #F39C12;
+}
+
+/* Card Content */
+.menu-card-content {
+    padding: var(--menu-spacing-md);
+    text-align: center;
+}
+
+/* Price - Large and Bold */
+.menu-card-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--menu-text-dark);
+    margin-bottom: var(--menu-spacing-xs);
+    line-height: 1.2;
+}
+
+.menu-card-price .currency {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Old price for discounts */
+.menu-card-old-price {
+    font-size: 0.875rem;
+    color: var(--menu-text-light);
+    text-decoration: line-through;
+    margin-right: var(--menu-spacing-xs);
+}
+
+/* Product Name - Bold */
+.menu-card-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--menu-text-dark);
+    margin-bottom: var(--menu-spacing-xs);
+    line-height: 1.3;
+    min-height: 2.6em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Weight/Volume - Gray */
+.menu-card-weight {
+    font-size: 0.8125rem;
+    color: var(--menu-text-light);
+    font-weight: 400;
+}
+
+/* ==============================================
+   SINGLE COLUMN VARIANT (for large items)
+   ============================================== */
+.menu-card.full-width {
+    grid-column: span 2;
+}
+
+.menu-card.full-width .menu-card-image {
+    aspect-ratio: 16/9;
+}
+
+/* ==============================================
+   EMPTY STATE
+   ============================================== */
+.menu-empty {
+    text-align: center;
+    padding: var(--menu-spacing-xl);
+    color: var(--menu-text-medium);
+}
+
+.menu-empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--menu-spacing-md);
+}
+
+.menu-empty h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--menu-spacing-sm);
+}
+
+/* ==============================================
+   SEARCH BAR
+   ============================================== */
+.menu-search {
+    position: relative;
+    margin-bottom: var(--menu-spacing-lg);
+}
+
+.menu-search input {
+    width: 100%;
+    padding: var(--menu-spacing-md) var(--menu-spacing-lg);
+    padding-left: 3rem;
+    background: var(--menu-card-bg);
+    border: none;
+    border-radius: var(--menu-radius);
+    font-size: 1rem;
+    color: var(--menu-text-dark);
+    box-shadow: 0 2px 12px var(--menu-shadow);
+    transition: all 0.2s ease;
+}
+
+.menu-search input:focus {
+    outline: none;
+    box-shadow: 0 4px 20px var(--menu-shadow);
+}
+
+.menu-search input::placeholder {
+    color: var(--menu-text-light);
+}
+
+.menu-search-icon {
+    position: absolute;
+    left: var(--menu-spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--menu-text-light);
+    font-size: 1.25rem;
+}
+
+/* ==============================================
+   WHATSAPP ORDER BUTTON
+   ============================================== */
+.menu-order-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--menu-spacing-sm);
+    width: 100%;
+    padding: var(--menu-spacing-md) var(--menu-spacing-lg);
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--menu-radius);
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: var(--menu-spacing-md);
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    transition: all 0.2s ease;
+}
+
+.menu-order-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.menu-order-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* ==============================================
+   FLOATING WHATSAPP BUTTON
+   ============================================== */
+.menu-float-btn {
+    position: fixed;
+    bottom: var(--menu-spacing-lg);
+    right: var(--menu-spacing-lg);
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.menu-float-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(37, 211, 102, 0.5);
+}
+
+.menu-float-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+}
+
+/* ==============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================== */
+@media (min-width: 768px) {
+    .menu-container {
+        max-width: 720px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--menu-spacing-lg);
+    }
+
+    .menu-card.full-width {
+        grid-column: span 3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .menu-container {
+        max-width: 960px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .menu-card.full-width {
+        grid-column: span 2;
+    }
+}
+
+/* ==============================================
+   ANIMATIONS
+   ============================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-card {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.menu-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.menu-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.menu-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.menu-card:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.menu-card:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.menu-card:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+/* ==============================================
+   LOADING SKELETON
+   ============================================== */
+.menu-skeleton {
+    background: linear-gradient(90deg,
+            var(--menu-bg-light) 25%,
+            var(--menu-card-bg) 50%,
+            var(--menu-bg-light) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ==============================================
+   FILTER PILLS
+   ============================================== */
+.menu-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--menu-spacing-sm);
+    margin-bottom: var(--menu-spacing-lg);
+    justify-content: center;
+}
+
+.menu-filter-pill {
+    padding: var(--menu-spacing-sm) var(--menu-spacing-md);
+    background: transparent;
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--menu-text-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.menu-filter-pill:hover,
+.menu-filter-pill.active {
+    background: var(--menu-accent);
+    border-color: var(--menu-accent);
+    color: white;
+}
+
+.menu-filter-pill .count {
+    display: inline-block;
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    font-size: 0.6875rem;
+    margin-left: var(--menu-spacing-xs);
+}
+
+/* ==============================================
+   SCROLLBAR STYLING
+   ============================================== */
+.menu-page::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu-page::-webkit-scrollbar-track {
+    background: var(--menu-bg-light);
+}
+
+.menu-page::-webkit-scrollbar-thumb {
+    background: var(--menu-accent);
+    border-radius: 3px;
+}

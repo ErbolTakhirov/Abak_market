@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb-inline">
+            <a href="{% url 'home' %}">Главная</a> /
+            <a href="{% url 'catalog:list' %}">Каталог</a> /
+            <span>{{ category.name }}</span>
+        </nav>
+        <h1>{{ category.icon }} {{ category.name }}</h1>
+        {% if category.description %}
+        <p>{{ category.description }}</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="catalog-section">
+    <div class="container">
+        <div class="catalog-layout">
+            <!-- Sidebar -->
+            <aside class="catalog-sidebar">
+                <div class="filter-section">
+                    <h3>Категории</h3>
+                    <ul class="category-filter">
+                        <li>
+                            <a href="{% url 'catalog:list' %}">← Все категории</a>
+                        </li>
+                        {% for cat in categories %}
+                        <li>
+                            <a href="{% url 'catalog:category' cat.slug %}"
+                                class="{% if cat.slug == category.slug %}active{% endif %}">
+                                {{ cat.icon }} {{ cat.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Products -->
+            <div class="catalog-content">
+                {% if products %}
+                <div class="results-count">
+                    {{ products|length }} товаров в категории
+                </div>
+
+                <div class="products-grid">
+                    {% for product in products %}
+                    <article class="product-card">
+                        {% if product.is_promotional %}
+                        <span class="product-badge product-badge-promo">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+
+                        <a href="{% url 'catalog:product' product.slug %}" class="product-image-link">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image"
+                                loading="lazy">
+                        </a>
+
+                        <div class="product-content">
+                            <h3 class="product-name">
+                                <a href="{% url 'catalog:product' product.slug %}">{{ product.name }}</a>
+                            </h3>
+
+                            {% if product.weight %}
+                            <span class="product-weight">{{ product.weight }}</span>
+                            {% endif %}
+
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    {% if product.old_price %}
+                                    <span class="price-old">{{ product.old_price }} ₽</span>
+                                    {% endif %}
+                                    <span class="price-current">{{ product.formatted_price }}</span>
+                                </div>
+
+                                <a href="{{ product.get_whatsapp_order_url }}" class="btn btn-cart" target="_blank">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <h3>В этой категории пока нет товаров</h3>
+                    <a href="{% url 'catalog:list' %}" class="btn btn-primary">Смотреть все товары</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

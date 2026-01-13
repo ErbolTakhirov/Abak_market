@@ -1,0 +1,124 @@
+# ==============================================
+# GITIGNORE - Grocery Store + WhatsApp Bot
+# ==============================================
+
+# ==============================================
+# PYTHON
+# ==============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==============================================
+# VIRTUAL ENVIRONMENT
+# ==============================================
+venv/
+ENV/
+env/
+.venv/
+
+# ==============================================
+# DJANGO
+# ==============================================
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+*.pot
+*.pyc
+
+# Static files (collected)
+staticfiles/
+
+# Media files (user uploads)
+media/
+
+# ==============================================
+# ENVIRONMENT & SECRETS
+# ==============================================
+.env
+.env.local
+.env.production
+.env.*.local
+*.pem
+*.key
+
+# Credentials folder
+credentials/
+
+# ==============================================
+# IDE & EDITORS
+# ==============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ==============================================
+# OS FILES
+# ==============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==============================================
+# LOGS & BACKUPS
+# ==============================================
+logs/
+*.log
+backups/
+
+# ==============================================
+# DOCKER (local volumes)
+# ==============================================
+.docker/
+
+# ==============================================
+# TESTING
+# ==============================================
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.hypothesis/
+
+# ==============================================
+# JUPYTER
+# ==============================================
+.ipynb_checkpoints/
+
+# ==============================================
+# MISC
+# ==============================================
+*.bak
+*.tmp
+*.temp
+.cache/

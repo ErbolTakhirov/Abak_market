@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>Контакты - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="Контактная информация {{ COMPANY_NAME }}. Адрес, телефон, WhatsApp.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <style>
+        /* Contacts page styles */
+        .contacts-header {
+            background: linear-gradient(135deg, var(--menu-accent) 0%, var(--menu-accent-dark) 100%);
+            padding: var(--menu-spacing-xl) 0;
+            text-align: center;
+            color: white;
+        }
+
+        .contacts-header h1 {
+            font-family: var(--menu-font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .contacts-content {
+            padding: var(--menu-spacing-xl) 0;
+        }
+
+        .contact-card {
+            background: var(--menu-card-bg);
+            border-radius: var(--menu-radius);
+            padding: var(--menu-spacing-xl);
+            margin-bottom: var(--menu-spacing-md);
+            box-shadow: 0 4px 20px var(--menu-shadow);
+        }
+
+        .contact-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--menu-spacing-md);
+            margin-bottom: var(--menu-spacing-md);
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--menu-bg-light);
+            border-radius: 50%;
+            font-size: 1.5rem;
+        }
+
+        .contact-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--menu-text-dark);
+        }
+
+        .contact-subtitle {
+            font-size: 0.8125rem;
+            color: var(--menu-text-light);
+        }
+
+        .contact-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--menu-text-dark);
+        }
+
+        .contact-value a {
+            color: var(--menu-accent);
+            text-decoration: none;
+        }
+
+        .contact-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* WhatsApp card special */
+        .contact-card.whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+        }
+
+        .contact-card.whatsapp .contact-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-card.whatsapp .contact-title,
+        .contact-card.whatsapp .contact-value {
+            color: white;
+        }
+
+        .contact-card.whatsapp .contact-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--menu-spacing-sm);
+            padding: var(--menu-spacing-md);
+            background: white;
+            color: #128C7E;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: var(--menu-radius-sm);
+            text-decoration: none;
+            margin-top: var(--menu-spacing-md);
+            transition: all 0.2s ease;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .whatsapp-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: #25D366;
+        }
+
+        /* Working hours */
+        .hours-grid {
+            display: grid;
+            gap: var(--menu-spacing-sm);
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--menu-spacing-sm) 0;
+            border-bottom: 1px solid var(--menu-border);
+        }
+
+        .hours-row:last-child {
+            border-bottom: none;
+        }
+
+        .hours-day {
+            font-weight: 500;
+            color: var(--menu-text-dark);
+        }
+
+        .hours-time {
+            font-weight: 600;
+            color: var(--menu-accent);
+        }
+
+        /* Map placeholder */
+        .map-container {
+            background: var(--menu-bg-light);
+            border-radius: var(--menu-radius);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--menu-text-light);
+            font-size: 3rem;
+            margin-bottom: var(--menu-spacing-md);
+        }
+
+        /* Bottom navigation */
+        .contacts-nav {
+            display: flex;
+            justify-content: space-around;
+            background: var(--menu-card-bg);
+            padding: var(--menu-spacing-md);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -4px 20px var(--menu-shadow);
+            z-index: 1000;
+        }
+
+        .contacts-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--menu-text-medium);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .contacts-nav a.active,
+        .contacts-nav a:hover {
+            color: var(--menu-accent);
+        }
+
+        .contacts-nav a span {
+            font-size: 1.25rem;
+        }
+
+        body {
+            padding-bottom: 70px;
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <!-- Header -->
+    <header class="contacts-header">
+        <h1>📞 Контакты</h1>
+    </header>
+
+    <div class="menu-container contacts-content">
+        <!-- WhatsApp Card -->
+        <div class="contact-card whatsapp">
+            <div class="contact-card-header">
+                <div class="contact-icon">💬</div>
+                <div>
+                    <div class="contact-title">WhatsApp</div>
+                    <div class="contact-subtitle">Быстрый способ связи</div>
+                </div>
+            </div>
+            <div class="contact-value">{{ COMPANY_WHATSAPP }}</div>
+            <a href="https://wa.me/{{ COMPANY_WHATSAPP|slice:'1:' }}?text=Здравствуйте!" class="whatsapp-btn"
+                target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                </svg>
+                Написать в WhatsApp
+            </a>
+        </div>
+
+        <!-- Phone Card -->
+        <div class="contact-card">
+            <div class="contact-card-header">
+                <div class="contact-icon">📞</div>
+                <div>
+                    <div class="contact-title">Телефон</div>
+                    <div class="contact-subtitle">Звоните нам</div>
+                </div>
+            </div>
+            <div class="contact-value">
+                <a href="tel:{{ COMPANY_PHONE }}">{{ COMPANY_PHONE }}</a>
+            </div>
+        </div>
+
+        <!-- Address Card -->
+        <div class="contact-card">
+            <div class="contact-card-header">
+                <div class="contact-icon">📍</div>
+                <div>
+                    <div class="contact-title">Адрес</div>
+                    <div class="contact-subtitle">Наше заведение</div>
+                </div>
+            </div>
+            <div class="contact-value">{{ COMPANY_ADDRESS }}</div>
+
+            <!-- Map placeholder -->
+            <div class="map-container">
+                🗺️
+            </div>
+        </div>
+
+        <!-- Working Hours Card -->
+        <div class="contact-card">
+            <div class="contact-card-header">
+                <div class="contact-icon">🕐</div>
+                <div>
+                    <div class="contact-title">Время работы</div>
+                    <div class="contact-subtitle">График работы заведения</div>
+                </div>
+            </div>
+            <div class="hours-grid">
+                <div class="hours-row">
+                    <span class="hours-day">Понедельник - Пятница</span>
+                    <span class="hours-time">9:00 - 21:00</span>
+                </div>
+                <div class="hours-row">
+                    <span class="hours-day">Суббота</span>
+                    <span class="hours-time">10:00 - 20:00</span>
+                </div>
+                <div class="hours-row">
+                    <span class="hours-day">Воскресенье</span>
+                    <span class="hours-time">10:00 - 18:00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="contacts-nav">
+        <a href="{% url 'home' %}">
+            <span>🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:menu' %}">
+            <span>🍽️</span>
+            Меню
+        </a>
+        <a href="{% url 'catalog:list' %}">
+            <span>🛒</span>
+            Каталог
+        </a>
+        <a href="{% url 'contacts' %}" class="active">
+            <span>📞</span>
+            Контакты
+        </a>
+    </nav>
+</body>
+
+</html>

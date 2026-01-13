@@ -1,0 +1,329 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>Каталог - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="Каталог товаров {{ COMPANY_NAME }}. Свежие продукты и готовые блюда.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <style>
+        /* Search bar styling */
+        .catalog-search {
+            position: relative;
+            margin-bottom: var(--menu-spacing-lg);
+        }
+
+        .catalog-search-form {
+            display: flex;
+            gap: var(--menu-spacing-sm);
+        }
+
+        .catalog-search-input {
+            flex: 1;
+            padding: var(--menu-spacing-md);
+            background: var(--menu-card-bg);
+            border: none;
+            border-radius: var(--menu-radius);
+            font-size: 1rem;
+            color: var(--menu-text-dark);
+            box-shadow: 0 2px 12px var(--menu-shadow);
+        }
+
+        .catalog-search-input:focus {
+            outline: none;
+            box-shadow: 0 4px 20px var(--menu-shadow);
+        }
+
+        .catalog-search-input::placeholder {
+            color: var(--menu-text-light);
+        }
+
+        .catalog-search-btn {
+            padding: var(--menu-spacing-md) var(--menu-spacing-lg);
+            background: var(--menu-accent);
+            color: white;
+            border: none;
+            border-radius: var(--menu-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .catalog-search-btn:hover {
+            background: var(--menu-accent-dark);
+        }
+
+        /* Results count */
+        .catalog-results {
+            text-align: center;
+            padding: var(--menu-spacing-md);
+            color: var(--menu-text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Pagination */
+        .catalog-pagination {
+            display: flex;
+            justify-content: center;
+            gap: var(--menu-spacing-sm);
+            padding: var(--menu-spacing-lg) 0;
+            margin-bottom: var(--menu-spacing-xl);
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 var(--menu-spacing-sm);
+            background: var(--menu-card-bg);
+            color: var(--menu-text-dark);
+            text-decoration: none;
+            border-radius: var(--menu-radius-sm);
+            font-weight: 600;
+            box-shadow: 0 2px 8px var(--menu-shadow);
+            transition: all 0.2s ease;
+        }
+
+        .page-link:hover,
+        .page-link.active {
+            background: var(--menu-accent);
+            color: white;
+        }
+
+        /* Body padding for nav */
+        body {
+            padding-bottom: 70px;
+        }
+
+        /* Bottom navigation */
+        .catalog-nav-bottom {
+            display: flex;
+            justify-content: space-around;
+            background: var(--menu-card-bg);
+            padding: var(--menu-spacing-md);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -4px 20px var(--menu-shadow);
+            z-index: 1000;
+        }
+
+        .catalog-nav-bottom a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--menu-text-medium);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .catalog-nav-bottom a.active,
+        .catalog-nav-bottom a:hover {
+            color: var(--menu-accent);
+        }
+
+        .catalog-nav-bottom a span {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <!-- Header -->
+    <header class="menu-header">
+        <h1>{{ COMPANY_NAME }}</h1>
+        <p class="subtitle">Каталог товаров</p>
+    </header>
+
+    <div class="menu-container">
+        <!-- Search -->
+        <div class="catalog-search">
+            <form class="catalog-search-form" action="{% url 'catalog:list' %}" method="get">
+                <input type="text" name="q" placeholder="Поиск товаров..." value="{{ search_query }}"
+                    class="catalog-search-input">
+                <button type="submit" class="catalog-search-btn">🔍</button>
+            </form>
+        </div>
+
+        <!-- Category Navigation -->
+        <nav class="menu-nav">
+            <a href="{% url 'catalog:list' %}" class="menu-nav-item {% if not current_category %}active{% endif %}">
+                Все
+            </a>
+            {% for category in categories %}
+            <a href="{% url 'catalog:list' %}?category={{ category.slug }}"
+                class="menu-nav-item {% if current_category == category.slug %}active{% endif %}">
+                {{ category.icon }} {{ category.name }}
+            </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Filter Pills -->
+        <div class="menu-filters">
+            <a href="{% url 'catalog:list' %}?filter=featured"
+                class="menu-filter-pill {% if current_filter == 'featured' %}active{% endif %}">
+                ⭐ Популярные
+            </a>
+            <a href="{% url 'catalog:list' %}?filter=new"
+                class="menu-filter-pill {% if current_filter == 'new' %}active{% endif %}">
+                🆕 Новинки
+            </a>
+            <a href="{% url 'catalog:list' %}?filter=promo"
+                class="menu-filter-pill {% if current_filter == 'promo' %}active{% endif %}">
+                🔥 Акции
+            </a>
+        </div>
+
+        <!-- Results count -->
+        <div class="catalog-results">
+            Найдено: {{ products|length }} товаров
+        </div>
+
+        {% if products %}
+        <!-- Products Grid -->
+        <div class="menu-grid">
+            {% for product in products %}
+            <a href="{% url 'catalog:product' product.slug %}" class="menu-card" id="product-{{ product.id }}">
+                <!-- Badge -->
+                {% if product.is_promotional %}
+                <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
+                {% elif product.is_new %}
+                <span class="menu-card-badge new">Новинка</span>
+                {% elif product.is_featured %}
+                <span class="menu-card-badge popular">Хит</span>
+                {% endif %}
+
+                <!-- Image -->
+                <div class="menu-card-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="menu-card-content">
+                    <!-- Price -->
+                    <div class="menu-card-price">
+                        {% if product.old_price %}
+                        <span class="menu-card-old-price">{{ product.old_price|floatformat:0 }}с</span>
+                        {% endif %}
+                        {{ product.price|floatformat:0 }}<span class="currency">с</span>
+                    </div>
+
+                    <!-- Name -->
+                    <h3 class="menu-card-name">{{ product.name }}</h3>
+
+                    <!-- Weight -->
+                    {% if product.weight %}
+                    <span class="menu-card-weight">{{ product.weight }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav class="catalog-pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                class="page-link">←</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+                href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                class="page-link">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                    class="page-link">→</a>
+                {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="menu-empty">
+            <div class="menu-empty-icon">🔍</div>
+            <h3>Товары не найдены</h3>
+            <p>Попробуйте изменить параметры поиска</p>
+            <a href="{% url 'catalog:list' %}" class="menu-order-btn"
+                style="max-width: 200px; margin: var(--menu-spacing-lg) auto 0;">
+                Сбросить фильтры
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- WhatsApp Order Button -->
+        <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+            class="menu-order-btn" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.25rem;height:1.25rem;">
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
+            Заказать в WhatsApp
+        </a>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="catalog-nav-bottom">
+        <a href="{% url 'home' %}">
+            <span>🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:menu' %}">
+            <span>🍽️</span>
+            Меню
+        </a>
+        <a href="{% url 'catalog:list' %}" class="active">
+            <span>🛒</span>
+            Каталог
+        </a>
+        <a href="{% url 'contacts' %}">
+            <span>📞</span>
+            Контакты
+        </a>
+    </nav>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!" class="menu-float-btn"
+        style="bottom: 90px;" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+    </a>
+</body>
+
+</html>

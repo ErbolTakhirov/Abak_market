@@ -1,0 +1,474 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>{{ COMPANY_NAME }} - Готовая еда и продукты</title>
+    <meta name="description" content="{{ COMPANY_DESCRIPTION }}">
+    <meta name="keywords" content="готовая еда, доставка, продукты, ресторан, кафе, WhatsApp">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ COMPANY_NAME }}">
+    <meta property="og:description" content="{{ COMPANY_DESCRIPTION }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <style>
+        /* Additional styles for home page */
+        .home-hero {
+            background: linear-gradient(135deg, var(--menu-accent) 0%, var(--menu-accent-dark) 100%);
+            padding: 60px 0 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .home-hero-content {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 var(--menu-spacing-md);
+        }
+
+        .home-logo {
+            font-family: var(--menu-font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--menu-spacing-sm);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-tagline {
+            font-size: 0.9375rem;
+            opacity: 0.95;
+            margin-bottom: var(--menu-spacing-lg);
+            line-height: 1.5;
+        }
+
+        .home-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--menu-spacing-sm);
+            padding: var(--menu-spacing-md) var(--menu-spacing-xl);
+            background: white;
+            color: var(--menu-accent-dark);
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: var(--menu-radius);
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .home-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-cta-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: #25D366;
+        }
+
+        /* Features strip */
+        .features-strip {
+            display: flex;
+            justify-content: center;
+            gap: var(--menu-spacing-lg);
+            padding: var(--menu-spacing-md);
+            background: rgba(255, 255, 255, 0.15);
+            margin-top: var(--menu-spacing-lg);
+            border-radius: var(--menu-radius);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--menu-spacing-xs);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-item span {
+            font-size: 1.25rem;
+        }
+
+        /* Section styling */
+        .home-section {
+            padding: var(--menu-spacing-xl) 0;
+        }
+
+        .home-section-header {
+            text-align: center;
+            margin-bottom: var(--menu-spacing-lg);
+        }
+
+        .home-section-title {
+            font-family: var(--menu-font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--menu-text-dark);
+            margin-bottom: var(--menu-spacing-xs);
+        }
+
+        .home-section-subtitle {
+            font-size: 0.875rem;
+            color: var(--menu-text-light);
+        }
+
+        /* Category cards */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--menu-spacing-md);
+        }
+
+        .category-card-home {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--menu-spacing-lg);
+            background: var(--menu-card-bg);
+            border-radius: var(--menu-radius);
+            text-decoration: none;
+            box-shadow: 0 4px 15px var(--menu-shadow);
+            transition: all 0.2s ease;
+        }
+
+        .category-card-home:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px var(--menu-shadow);
+        }
+
+        .category-icon-home {
+            font-size: 2.5rem;
+            margin-bottom: var(--menu-spacing-sm);
+        }
+
+        .category-name-home {
+            font-weight: 700;
+            font-size: 0.9375rem;
+            color: var(--menu-text-dark);
+            text-align: center;
+        }
+
+        .category-count-home {
+            font-size: 0.75rem;
+            color: var(--menu-text-light);
+            margin-top: var(--menu-spacing-xs);
+        }
+
+        /* Promo banner */
+        .promo-banner-home {
+            background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+            padding: var(--menu-spacing-lg);
+            border-radius: var(--menu-radius);
+            text-align: center;
+            color: white;
+            margin: var(--menu-spacing-lg) 0;
+        }
+
+        .promo-banner-home h3 {
+            font-family: var(--menu-font-display);
+            font-size: 1.25rem;
+            margin-bottom: var(--menu-spacing-sm);
+        }
+
+        .promo-banner-home p {
+            font-size: 0.875rem;
+            opacity: 0.95;
+            margin-bottom: var(--menu-spacing-md);
+        }
+
+        .promo-banner-home a {
+            display: inline-block;
+            padding: var(--menu-spacing-sm) var(--menu-spacing-lg);
+            background: white;
+            color: #C0392B;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border-radius: var(--menu-radius-sm);
+            text-decoration: none;
+        }
+
+        /* View all link */
+        .view-all-link {
+            display: block;
+            text-align: center;
+            padding: var(--menu-spacing-md) 0;
+            color: var(--menu-accent);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        .home-footer {
+            background: var(--menu-text-dark);
+            color: white;
+            padding: var(--menu-spacing-xl) 0;
+            text-align: center;
+        }
+
+        .home-footer-logo {
+            font-family: var(--menu-font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--menu-spacing-md);
+        }
+
+        .home-footer-info {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        .home-footer-info a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .home-footer-copy {
+            margin-top: var(--menu-spacing-lg);
+            padding-top: var(--menu-spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
+        /* Navigation bar */
+        .home-nav {
+            display: flex;
+            justify-content: space-around;
+            background: var(--menu-card-bg);
+            padding: var(--menu-spacing-md);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -4px 20px var(--menu-shadow);
+            z-index: 1000;
+        }
+
+        .home-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--menu-text-medium);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .home-nav a.active,
+        .home-nav a:hover {
+            color: var(--menu-accent);
+        }
+
+        .home-nav a span {
+            font-size: 1.25rem;
+        }
+
+        /* Bottom padding for fixed nav */
+        body {
+            padding-bottom: 70px;
+        }
+
+        @media (min-width: 768px) {
+            .category-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .features-strip {
+                gap: var(--menu-spacing-2xl);
+            }
+
+            .feature-item {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <!-- Hero Section -->
+    <section class="home-hero">
+        <div class="home-hero-content">
+            <h1 class="home-logo">🍽️ {{ COMPANY_NAME }}</h1>
+            <p class="home-tagline">
+                Свежие продукты и готовые блюда с доставкой.<br>
+                Заказывайте через WhatsApp!
+            </p>
+
+            <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+                class="home-cta-btn" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                </svg>
+                Заказать в WhatsApp
+            </a>
+
+            <div class="features-strip">
+                <div class="feature-item">
+                    <span>🚚</span> Доставка
+                </div>
+                <div class="feature-item">
+                    <span>✨</span> Свежее
+                </div>
+                <div class="feature-item">
+                    <span>💰</span> Выгодно
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="menu-container">
+        <!-- Promo Banner -->
+        {% if promo_products %}
+        <div class="promo-banner-home">
+            <h3>🔥 Акции дня</h3>
+            <p>Скидки до 30% на популярные блюда!</p>
+            <a href="{% url 'catalog:menu' %}?filter=promo">Смотреть акции</a>
+        </div>
+        {% endif %}
+
+        <!-- Categories Section -->
+        {% if categories %}
+        <section class="home-section">
+            <div class="home-section-header">
+                <h2 class="home-section-title">Категории</h2>
+                <p class="home-section-subtitle">Выберите раздел меню</p>
+            </div>
+
+            <div class="category-grid">
+                {% for category in categories %}
+                <a href="{% url 'catalog:menu' %}?category={{ category.slug }}" class="category-card-home">
+                    <div class="category-icon-home">{{ category.icon }}</div>
+                    <div class="category-name-home">{{ category.name }}</div>
+                    <div class="category-count-home">{{ category.products_count }} позиций</div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Popular Products -->
+        {% if featured_products %}
+        <section class="home-section">
+            <div class="home-section-header">
+                <h2 class="home-section-title">Популярные блюда</h2>
+                <p class="home-section-subtitle">Выбор наших клиентов</p>
+            </div>
+
+            <div class="menu-grid">
+                {% for product in featured_products|slice:":4" %}
+                <a href="{% url 'catalog:product' product.slug %}" class="menu-card">
+                    {% if product.is_promotional %}
+                    <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
+                    {% elif product.is_new %}
+                    <span class="menu-card-badge new">Новинка</span>
+                    {% endif %}
+
+                    <div class="menu-card-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
+                        {% endif %}
+                    </div>
+
+                    <div class="menu-card-content">
+                        <div class="menu-card-price">
+                            {{ product.price|floatformat:0 }}<span class="currency">с</span>
+                        </div>
+                        <h3 class="menu-card-name">{{ product.name }}</h3>
+                        {% if product.weight %}
+                        <span class="menu-card-weight">{{ product.weight }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <a href="{% url 'catalog:menu' %}" class="view-all-link">
+                Смотреть всё меню →
+            </a>
+        </section>
+        {% endif %}
+
+        <!-- WhatsApp Order Button -->
+        <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!%20Хочу%20сделать%20заказ"
+            class="menu-order-btn" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.25rem;height:1.25rem;">
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
+            Заказать в WhatsApp
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="home-footer">
+        <div class="menu-container">
+            <div class="home-footer-logo">🍽️ {{ COMPANY_NAME }}</div>
+            <div class="home-footer-info">
+                📞 <a href="tel:{{ COMPANY_PHONE }}">{{ COMPANY_PHONE }}</a><br>
+                📍 {{ COMPANY_ADDRESS }}<br>
+                💬 <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}" target="_blank">WhatsApp</a>
+            </div>
+            <div class="home-footer-copy">
+                © {% now "Y" %} {{ COMPANY_NAME }}. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <nav class="home-nav">
+        <a href="{% url 'home' %}" class="active">
+            <span>🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:menu' %}">
+            <span>🍽️</span>
+            Меню
+        </a>
+        <a href="{% url 'catalog:list' %}">
+            <span>🛒</span>
+            Каталог
+        </a>
+        <a href="{% url 'contacts' %}">
+            <span>📞</span>
+            Контакты
+        </a>
+    </nav>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/{{ company_whatsapp|slice:'1:' }}?text=Здравствуйте!" class="menu-float-btn"
+        style="bottom: 90px;" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+    </a>
+</body>
+
+</html>

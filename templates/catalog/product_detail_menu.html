@@ -1,0 +1,423 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>{{ product.name }} - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="{{ product.short_description|default:product.description|truncatewords:30 }}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ product.name }}">
+    <meta property="og:description"
+        content="{{ product.short_description|default:product.description|truncatewords:30 }}">
+    <meta property="og:type" content="product">
+    {% if product.image %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">
+    {% endif %}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <style>
+        /* Product detail styles */
+        .product-header {
+            position: relative;
+        }
+
+        .product-back {
+            position: absolute;
+            top: var(--menu-spacing-md);
+            left: var(--menu-spacing-md);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 1.25rem;
+            box-shadow: 0 2px 10px var(--menu-shadow);
+            z-index: 10;
+        }
+
+        .product-image-main {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: var(--menu-bg-light);
+        }
+
+        .product-badges {
+            position: absolute;
+            top: var(--menu-spacing-md);
+            right: var(--menu-spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--menu-spacing-xs);
+        }
+
+        .product-badge-detail {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: var(--menu-radius-sm);
+            text-transform: uppercase;
+        }
+
+        .product-badge-detail.promo {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .product-badge-detail.new {
+            background: #27AE60;
+            color: white;
+        }
+
+        .product-badge-detail.popular {
+            background: #F39C12;
+            color: white;
+        }
+
+        /* Product info */
+        .product-info {
+            padding: var(--menu-spacing-lg);
+            background: var(--menu-card-bg);
+            border-radius: var(--menu-radius) var(--menu-radius) 0 0;
+            margin-top: -20px;
+            position: relative;
+        }
+
+        .product-category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--menu-bg);
+            color: var(--menu-text-medium);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: var(--menu-radius-sm);
+            margin-bottom: var(--menu-spacing-sm);
+        }
+
+        .product-title {
+            font-family: var(--menu-font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--menu-text-dark);
+            margin-bottom: var(--menu-spacing-sm);
+            line-height: 1.3;
+        }
+
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--menu-spacing-md);
+            margin-bottom: var(--menu-spacing-md);
+            color: var(--menu-text-light);
+            font-size: 0.875rem;
+        }
+
+        .product-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--menu-spacing-xs);
+        }
+
+        .product-price-block {
+            display: flex;
+            align-items: baseline;
+            gap: var(--menu-spacing-sm);
+            margin-bottom: var(--menu-spacing-lg);
+        }
+
+        .product-price-current {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--menu-text-dark);
+        }
+
+        .product-price-currency {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .product-price-old {
+            font-size: 1.125rem;
+            color: var(--menu-text-light);
+            text-decoration: line-through;
+        }
+
+        .product-discount {
+            padding: 4px 8px;
+            background: #E74C3C;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: var(--menu-radius-sm);
+        }
+
+        .product-description {
+            font-size: 0.9375rem;
+            color: var(--menu-text-medium);
+            line-height: 1.7;
+            margin-bottom: var(--menu-spacing-lg);
+        }
+
+        /* Product details section */
+        .product-details {
+            padding: var(--menu-spacing-md);
+            background: var(--menu-bg-light);
+            border-radius: var(--menu-radius-sm);
+            margin-bottom: var(--menu-spacing-lg);
+        }
+
+        .product-details-title {
+            font-weight: 700;
+            font-size: 0.9375rem;
+            color: var(--menu-text-dark);
+            margin-bottom: var(--menu-spacing-sm);
+        }
+
+        .product-details-list {
+            display: grid;
+            gap: var(--menu-spacing-sm);
+        }
+
+        .product-details-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .product-details-label {
+            color: var(--menu-text-light);
+        }
+
+        .product-details-value {
+            font-weight: 600;
+            color: var(--menu-text-dark);
+        }
+
+        /* Order section */
+        .product-order {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: var(--menu-spacing-md);
+            background: var(--menu-card-bg);
+            box-shadow: 0 -4px 20px var(--menu-shadow);
+            display: flex;
+            gap: var(--menu-spacing-md);
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .product-order-price {
+            flex-shrink: 0;
+        }
+
+        .product-order-price-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--menu-text-dark);
+        }
+
+        .product-order-price-weight {
+            font-size: 0.75rem;
+            color: var(--menu-text-light);
+        }
+
+        .product-order-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--menu-spacing-sm);
+            padding: var(--menu-spacing-md);
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: var(--menu-radius);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .product-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .product-order-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: currentColor;
+        }
+
+        /* Related products */
+        .related-section {
+            padding: var(--menu-spacing-lg);
+            padding-bottom: 100px;
+        }
+
+        .related-title {
+            font-family: var(--menu-font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--menu-text-dark);
+            margin-bottom: var(--menu-spacing-md);
+            text-align: center;
+        }
+
+        body {
+            padding-bottom: 80px;
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <!-- Product Header with Image -->
+    <header class="product-header">
+        <a href="javascript:history.back()" class="product-back">←</a>
+
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
+        {% else %}
+        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="product-image-main">
+        {% endif %}
+
+        <div class="product-badges">
+            {% if product.is_promotional %}
+            <span class="product-badge-detail promo">-{{ product.discount_percent }}%</span>
+            {% endif %}
+            {% if product.is_new %}
+            <span class="product-badge-detail new">Новинка</span>
+            {% endif %}
+            {% if product.is_featured %}
+            <span class="product-badge-detail popular">Хит</span>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Product Info -->
+    <div class="product-info">
+        <span class="product-category-tag">{{ product.category.icon }} {{ product.category.name }}</span>
+
+        <h1 class="product-title">{{ product.name }}</h1>
+
+        <div class="product-meta">
+            {% if product.weight %}
+            <span class="product-meta-item">📦 {{ product.weight }}</span>
+            {% endif %}
+            {% if product.calories %}
+            <span class="product-meta-item">🔥 {{ product.calories }} ккал</span>
+            {% endif %}
+        </div>
+
+        <div class="product-price-block">
+            <span class="product-price-current">{{ product.price|floatformat:0 }}<span
+                    class="product-price-currency">с</span></span>
+            {% if product.old_price %}
+            <span class="product-price-old">{{ product.old_price|floatformat:0 }}с</span>
+            <span class="product-discount">-{{ product.discount_percent }}%</span>
+            {% endif %}
+        </div>
+
+        {% if product.description %}
+        <div class="product-description">
+            {{ product.description|linebreaks }}
+        </div>
+        {% endif %}
+
+        {% if product.ingredients or product.weight or product.calories %}
+        <div class="product-details">
+            <div class="product-details-title">Информация о блюде</div>
+            <div class="product-details-list">
+                {% if product.weight %}
+                <div class="product-details-item">
+                    <span class="product-details-label">Порция</span>
+                    <span class="product-details-value">{{ product.weight }}</span>
+                </div>
+                {% endif %}
+                {% if product.calories %}
+                <div class="product-details-item">
+                    <span class="product-details-label">Калорийность</span>
+                    <span class="product-details-value">{{ product.calories }} ккал / 100г</span>
+                </div>
+                {% endif %}
+                {% if product.ingredients %}
+                <div class="product-details-item" style="flex-direction: column; gap: 4px;">
+                    <span class="product-details-label">Состав:</span>
+                    <span class="product-details-value" style="font-weight: 400;">{{ product.ingredients }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="related-section">
+        <h2 class="related-title">Похожие блюда</h2>
+        <div class="menu-grid">
+            {% for related in related_products %}
+            <a href="{% url 'catalog:product' related.slug %}" class="menu-card">
+                <div class="menu-card-image">
+                    {% if related.image %}
+                    <img src="{{ related.image.url }}" alt="{{ related.name }}" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="{{ related.name }}" loading="lazy">
+                    {% endif %}
+                </div>
+                <div class="menu-card-content">
+                    <div class="menu-card-price">
+                        {{ related.price|floatformat:0 }}<span class="currency">с</span>
+                    </div>
+                    <h3 class="menu-card-name">{{ related.name }}</h3>
+                    {% if related.weight %}
+                    <span class="menu-card-weight">{{ related.weight }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Fixed Order Button -->
+    <div class="product-order">
+        <div class="product-order-price">
+            <div class="product-order-price-value">{{ product.price|floatformat:0 }}с</div>
+            {% if product.weight %}
+            <div class="product-order-price-weight">{{ product.weight }}</div>
+            {% endif %}
+        </div>
+        <a href="{{ product.get_whatsapp_order_url }}" class="product-order-btn" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
+            Заказать в WhatsApp
+        </a>
+    </div>
+</body>
+
+</html>
