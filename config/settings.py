@@ -107,21 +107,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # DATABASE - PostgreSQL
 # ==============================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME', default='grocery_store'),
-        'USER': config('DATABASE_USER', default='grocery_user'),
-        'PASSWORD': config('DATABASE_PASSWORD', default=''),
-        'HOST': config('DATABASE_HOST', default='localhost'),
-        'PORT': config('DATABASE_PORT', default='5432'),
-        'CONN_MAX_AGE': 60,
-        'CONN_HEALTH_CHECKS': True,
-        'OPTIONS': {
-            'connect_timeout': 10,
-        },
+import dj_database_url
+
+# Database Configuration
+if DEBUG:
+    # Local SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # Production PostgreSQL (Render/VPS)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 
 # ==============================================
@@ -275,16 +280,31 @@ CSRF_TRUSTED_ORIGINS = config(
 # SECURITY SETTINGS (Production)
 # ==============================================
 
+# ==============================================
+# SECURITY SETTINGS (Production)
+# ==============================================
+
 if not DEBUG:
-    SECURE_BROWSER_XSS_FILTER = True
+    # SSL/HTTPS
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    
+    # Cookies
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # HSTS (HTTP Strict Transport Security)
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Other security headers
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 0  # Disabled for HTTP
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-    SECURE_HSTS_PRELOAD = False
-    SECURE_SSL_REDIRECT = False # Disabled for HTTP
-    SESSION_COOKIE_SECURE = False # Disabled for HTTP
-    CSRF_COOKIE_SECURE = False # Disabled for HTTP
+    SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'
+    
+    # Whitenoise Storage (Compression + Caching)
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # ==============================================
@@ -353,11 +373,11 @@ WHISPER_MODEL = config('WHISPER_MODEL', default='base')
 # COMPANY CONFIGURATION
 # ==============================================
 
-COMPANY_NAME = config('COMPANY_NAME', default='Продуктовый Магазин "Свежесть"')
-COMPANY_PHONE = config('COMPANY_PHONE', default='+7 (999) 123-45-67')
-COMPANY_ADDRESS = config('COMPANY_ADDRESS', default='г. Москва, ул. Примерная, д. 1')
-COMPANY_WHATSAPP = config('COMPANY_WHATSAPP', default='+79991234567')
-COMPANY_DESCRIPTION = 'Свежие продукты и готовые блюда с доставкой на дом'
+COMPANY_NAME = config('COMPANY_NAME', default='Абак маркет')
+COMPANY_PHONE = config('COMPANY_PHONE', default='+7 (000) 000-00-00')
+COMPANY_ADDRESS = config('COMPANY_ADDRESS', default='Адрес скоро появится')
+COMPANY_WHATSAPP = config('COMPANY_WHATSAPP', default='')
+COMPANY_DESCRIPTION = 'Свежие продукты и готовые блюда'
 
 
 # ==============================================
@@ -453,52 +473,6 @@ if SENTRY_DSN and SENTRY_DSN.startswith('http') and not DEBUG:
         )
     except Exception:
         pass
-
-# FORCE HTTP OVERRIDE
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_HSTS_SECONDS = 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
-
-
-
-# FORCE HTTP OVERRIDE
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_HSTS_SECONDS = 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
-
-# ==============================================
-# LOCAL DEVELOPMENT SETTINGS (SQLite & No Redis)
-# ==============================================
-
-USE_SQLITE = config('USE_SQLITE', default=False, cast=bool)
-
-if USE_SQLITE:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        }
-    }
-    
-    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-    SESSION_CACHE_ALIAS = 'default'
-    
-    # Disable Celery eagerly for local dev if desired, or just let it fail silently
-    CELERY_TASK_ALWAYS_EAGER = True
-    CELERY_TASK_EAGER_PROPAGATES = True
-
 
 # ==============================================
 # DEBUG TOOLBAR CONFIGURATION

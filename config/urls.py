@@ -58,6 +58,7 @@ if settings.DEBUG:
 
 
 # Custom admin site configuration
-admin.site.site_header = 'Продуктовый Магазин "Свежесть"'
+# Custom admin site configuration
+admin.site.site_header = 'Абак маркет'
 admin.site.site_title = 'Админ-панель'
 admin.site.index_title = 'Управление магазином'
