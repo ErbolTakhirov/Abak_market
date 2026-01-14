@@ -129,27 +129,37 @@ else:
 
 
 # ==============================================
-# CACHE - Redis
+# CACHE CONFIGURATION
 # ==============================================
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': config('REDIS_URL', default='redis://localhost:6379/0'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-            'CONNECTION_POOL_KWARGS': {'max_connections': 50},
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-        },
-        'KEY_PREFIX': 'grocery',
-    }
-}
+REDIS_URL = config('REDIS_URL', default='')
 
-# Session engine using Redis
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+if REDIS_URL:
+    # Production with Redis
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'SOCKET_CONNECT_TIMEOUT': 5,
+                'SOCKET_TIMEOUT': 5,
+                'CONNECTION_POOL_KWARGS': {'max_connections': 50},
+            },
+            'KEY_PREFIX': 'abak',
+        }
+    }
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+    SESSION_CACHE_ALIAS = 'default'
+else:
+    # Local/Render without Redis - use local memory cache
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
+    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
 # ==============================================
