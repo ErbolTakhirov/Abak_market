@@ -42,7 +42,6 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
-    'storages',
 ]
 
 LOCAL_APPS = [
