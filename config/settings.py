@@ -29,6 +29,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market
 # ==============================================
 
 DJANGO_APPS = [
+    'jazzmin',  # Modern admin theme (must be before admin)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -502,4 +503,127 @@ if DEBUG:
         pass
 
 
+# ==============================================
+# JAZZMIN ADMIN THEME CONFIGURATION
+# ==============================================
 
+JAZZMIN_SETTINGS = {
+    # Title on the login page
+    "site_title": "Абак маркет",
+    
+    # Title on the brand (main navigation)
+    "site_header": "Абак маркет",
+    
+    # Title in the browser tab
+    "site_brand": "Абак",
+    
+    # Welcome text on the login page
+    "welcome_sign": "Добро пожаловать в панель управления",
+    
+    # Copyright text
+    "copyright": "Абак маркет © 2024",
+    
+    # Search models
+    "search_model": ["catalog.Product", "orders.Order", "users.User"],
+    
+    # User menu links
+    "usermenu_links": [
+        {"name": "Сайт", "url": "/", "new_window": True, "icon": "fas fa-globe"},
+        {"model": "users.user"},
+    ],
+    
+    # Top menu
+    "topmenu_links": [
+        {"name": "Главная", "url": "admin:index", "icon": "fas fa-home"},
+        {"name": "Сайт", "url": "/", "new_window": True, "icon": "fas fa-globe"},
+        {"name": "Меню", "url": "/catalog/menu/", "new_window": True, "icon": "fas fa-utensils"},
+    ],
+    
+    # Show sidebar
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    
+    # Hide apps from sidebar
+    "hide_apps": [],
+    
+    # Hide models from sidebar
+    "hide_models": [],
+    
+    # Order of apps in sidebar
+    "order_with_respect_to": [
+        "catalog",
+        "orders", 
+        "users",
+        "payments",
+        "dialogs",
+        "auth",
+    ],
+    
+    # Icons for apps
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "users.User": "fas fa-user-tie",
+        "users.OperatorAssignment": "fas fa-headset",
+        "catalog.Category": "fas fa-tags",
+        "catalog.Product": "fas fa-box",
+        "catalog.ProductImage": "fas fa-images",
+        "catalog.PDFCatalog": "fas fa-file-pdf",
+        "orders.Order": "fas fa-shopping-cart",
+        "orders.OrderItem": "fas fa-list",
+        "payments.PaymentCredentials": "fas fa-credit-card",
+        "dialogs.Dialog": "fas fa-comments",
+        "dialogs.Message": "fas fa-comment",
+    },
+    
+    # Default icon
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-file",
+    
+    # Customization
+    "related_modal_active": True,
+    "custom_css": None,
+    "custom_js": None,
+    
+    # Change view settings
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "users.user": "collapsible",
+        "catalog.product": "horizontal_tabs",
+        "orders.order": "vertical_tabs",
+    },
+}
+
+# Jazzmin UI Tweaks
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-success",
+    "accent": "accent-teal",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-success",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}
