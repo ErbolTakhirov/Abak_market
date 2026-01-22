@@ -21,7 +21,10 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market.onrender.com,abakmarket.store,www.abakmarket.store', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market.onrender.com', cast=Csv())
+
+# Force add production domains to ensure they work regardless of environment variables
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS + ['abakmarket.store', 'www.abakmarket.store', 'abak-market.onrender.com']))
 
 
 # ==============================================
@@ -36,9 +39,16 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:8000,http://127.0.0.1:8000,https://abakmarket.store,https://www.abakmarket.store,https://abak-market.onrender.com',
+    default='http://localhost:8000,http://127.0.0.1:8000',
     cast=Csv()
 )
+
+# Force add production domains
+CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS + [
+    'https://abakmarket.store', 
+    'https://www.abakmarket.store', 
+    'https://abak-market.onrender.com'
+]))
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -49,9 +59,16 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost:8000,http://127.0.0.1:8000,https://abak-market.onrender.com,https://abakmarket.store,https://www.abakmarket.store',
+    default='http://localhost:8000,http://127.0.0.1:8000',
     cast=Csv()
 )
+
+# Force add production domains
+CSRF_TRUSTED_ORIGINS = list(set(CSRF_TRUSTED_ORIGINS + [
+    'https://abakmarket.store', 
+    'https://www.abakmarket.store', 
+    'https://abak-market.onrender.com'
+]))
 
 
 # ==============================================
