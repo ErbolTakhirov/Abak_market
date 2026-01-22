@@ -446,11 +446,28 @@
     .menu-card.full-width {
         grid-column: span 3;
     }
+
+    /* Ограничиваем высоту картинки на детальной странице планшета */
+    .product-header {
+        max-height: 50vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        background: var(--menu-bg-light);
+    }
+
+    .product-image-main {
+        width: auto;
+        height: 100%;
+        max-height: 50vh;
+        aspect-ratio: auto;
+    }
 }
 
 @media (min-width: 1024px) {
     .menu-container {
-        max-width: 960px;
+        max-width: 1140px;
+        /* Wider container for desktop */
     }
 
     .menu-grid {
@@ -459,6 +476,74 @@
 
     .menu-card.full-width {
         grid-column: span 2;
+    }
+
+    /* Центрируем и ограничиваем детальную страницу на ПК */
+    body.menu-page {
+        background-color: var(--menu-bg-light);
+        /* Фон всей страницы */
+    }
+
+    .product-header,
+    .product-info,
+    .product-order {
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        /* Чтобы order fixed bar привязался к потоку или контейнеру */
+    }
+
+    .product-order {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 600px;
+        border-radius: var(--menu-radius) var(--menu-radius) 0 0;
+    }
+
+    /* Исправляем layout карточки в меню */
+    .menu-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #fff;
+    }
+
+    .menu-card-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+
+    .menu-card-name {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        color: #000;
+        text-align: left;
+    }
+
+    .menu-card-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #000;
+        text-align: left;
+    }
+
+    /* Кнопка "В корзину" (зеленая) */
+    .menu-card-add-btn {
+        margin-top: auto;
+        background: #27AE60;
+        color: white;
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        display: block;
+        /* Force show */
     }
 }
 
