@@ -398,7 +398,7 @@
 
                     <div class="menu-card-content">
                         <div class="menu-card-price">
-                            {{ product.price|floatformat:0 }}<span class="currency">с</span>
+                            {{ product.formatted_price }}
                         </div>
                         <h3 class="menu-card-name">{{ product.name }}</h3>
                         {% if product.weight %}

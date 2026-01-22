@@ -108,6 +108,7 @@ class Product(models.Model):
     """
     
     class Currency(models.TextChoices):
+        KGS = 'KGS', 'сом'  # Кыргызский сом - основная валюта
         RUB = 'RUB', '₽'
         USD = 'USD', '$'
         EUR = 'EUR', '€'
@@ -160,7 +161,7 @@ class Product(models.Model):
         _('Валюта'),
         max_length=3,
         choices=Currency.choices,
-        default=Currency.RUB
+        default=Currency.KGS  # Сом по умолчанию
     )
     
     # Unit and quantity
@@ -288,6 +289,14 @@ class Product(models.Model):
         """Return formatted price string."""
         from apps.core.utils import format_price
         return format_price(float(self.price), self.currency)
+    
+    @property
+    def formatted_old_price(self):
+        """Return formatted old price string."""
+        if self.old_price:
+            from apps.core.utils import format_price
+            return format_price(float(self.old_price), self.currency)
+        return None
     
     @property
     def whatsapp_text(self):

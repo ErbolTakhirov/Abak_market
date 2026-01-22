@@ -1,0 +1,65 @@
+databases:
+  - name: abak_db
+    databaseName: abak_market
+    user: abak_user
+    plan: free
+
+services:
+  # 1. Main Web Service (Django)
+  - type: web
+    name: abak_market_web
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "abakmarket.store,www.abakmarket.store,onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: abak_db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: abak_redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: abak_redis
+          property: connectionString
+    autoDeploy: true
+
+  # 2. Celery Worker (Background tasks)
+  - type: worker
+    name: abak_market_worker
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "celery -A config worker --loglevel=info --concurrency=2"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: abak_db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: abak_redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: abak_redis
+          property: connectionString
+
+  # 3. Redis (Cache & Broker)
+  - type: redis
+    name: abak_redis
+    plan: free
+    ipAllowList: [] # Access only from internal services

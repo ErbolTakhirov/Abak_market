@@ -328,10 +328,9 @@
         </div>
 
         <div class="product-price-block">
-            <span class="product-price-current">{{ product.price|floatformat:0 }}<span
-                    class="product-price-currency">с</span></span>
+            <span class="product-price-current">{{ product.formatted_price }}</span>
             {% if product.old_price %}
-            <span class="product-price-old">{{ product.old_price|floatformat:0 }}с</span>
+            <span class="product-price-old">{{ product.formatted_old_price }}</span>
             <span class="product-discount">-{{ product.discount_percent }}%</span>
             {% endif %}
         </div>
@@ -385,7 +384,7 @@
                 </div>
                 <div class="menu-card-content">
                     <div class="menu-card-price">
-                        {{ related.price|floatformat:0 }}<span class="currency">с</span>
+                        {{ related.formatted_price }}
                     </div>
                     <h3 class="menu-card-name">{{ related.name }}</h3>
                     {% if related.weight %}
@@ -401,7 +400,7 @@
     <!-- Fixed Order Button -->
     <div class="product-order">
         <div class="product-order-price">
-            <div class="product-order-price-value">{{ product.price|floatformat:0 }}с</div>
+            <div class="product-order-price-value">{{ product.formatted_price }}</div>
             {% if product.weight %}
             <div class="product-order-price-weight">{{ product.weight }}</div>
             {% endif %}

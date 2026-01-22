@@ -111,7 +111,7 @@
                             <div class="product-footer">
                                 <div class="product-price">
                                     {% if product.old_price %}
-                                    <span class="price-old">{{ product.old_price }} ₽</span>
+                                    <span class="price-old">{{ product.formatted_old_price }}</span>
                                     {% endif %}
                                     <span class="price-current">{{ product.formatted_price }}</span>
                                 </div>

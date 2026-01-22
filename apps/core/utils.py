@@ -87,6 +87,7 @@ def normalize_phone_for_whatsapp(phone: str) -> str:
 def format_price(amount: float, currency: str = 'RUB') -> str:
     """Format price with currency symbol."""
     currency_symbols = {
+        'KGS': 'с',
         'RUB': '₽',
         'USD': '$',
         'EUR': '€',

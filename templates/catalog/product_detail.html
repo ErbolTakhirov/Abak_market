@@ -65,7 +65,7 @@
 
                 <div class="product-price-block">
                     {% if product.old_price %}
-                    <span class="price-old">{{ product.old_price }} ₽</span>
+                    <span class="price-old">{{ product.formatted_old_price }}</span>
                     <span class="price-discount">-{{ product.discount_percent }}%</span>
                     {% endif %}
                     <span class="price-current">{{ product.formatted_price }}</span>
