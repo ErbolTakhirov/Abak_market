@@ -21,247 +21,14 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,abak-market.onrender.com,abakmarket.store,www.abakmarket.store', cast=Csv())
 
 
 # ==============================================
 # APPLICATION DEFINITION
 # ==============================================
 
-DJANGO_APPS = [
-    'jazzmin',  # Modern admin theme (must be before admin)
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-]
-
-THIRD_PARTY_APPS = [
-    'rest_framework',
-    'corsheaders',
-    'django_filters',
-]
-
-LOCAL_APPS = [
-    'apps.core.apps.CoreConfig',
-    'apps.users.apps.UsersConfig',
-    'apps.catalog.apps.CatalogConfig',
-    'apps.orders.apps.OrdersConfig',
-    'apps.whatsapp_bot.apps.WhatsappBotConfig',
-    'apps.payments.apps.PaymentsConfig',
-    'apps.dialogs.apps.DialogsConfig',
-]
-
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
-
-# ==============================================
-# MIDDLEWARE
-# ==============================================
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'apps.core.middleware.RequestLoggingMiddleware',
-]
-
-ROOT_URLCONF = 'config.urls'
-
-
-# ==============================================
-# TEMPLATES
-# ==============================================
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'apps.core.context_processors.site_settings',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# ==============================================
-# DATABASE CONFIGURATION
-# ==============================================
-
-import dj_database_url
-
-DATABASE_URL = config('DATABASE_URL', default='')
-
-if DATABASE_URL:
-    # Production: PostgreSQL via DATABASE_URL
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    # Local development: SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-
-# ==============================================
-# CACHE CONFIGURATION
-# ==============================================
-
-REDIS_URL = config('REDIS_URL', default='')
-
-if REDIS_URL:
-    # Production with Redis
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': REDIS_URL,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                'SOCKET_CONNECT_TIMEOUT': 5,
-                'SOCKET_TIMEOUT': 5,
-                'CONNECTION_POOL_KWARGS': {'max_connections': 50},
-            },
-            'KEY_PREFIX': 'abak',
-        }
-    }
-    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-    SESSION_CACHE_ALIAS = 'default'
-else:
-    # Local/Render without Redis - use local memory cache
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
-    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-
-
-# ==============================================
-# PASSWORD VALIDATION
-# ==============================================
-
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 10}},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-
-# ==============================================
-# INTERNATIONALIZATION
-# ==============================================
-
-LANGUAGE_CODE = 'ru-ru'
-TIME_ZONE = 'Europe/Moscow'
-USE_I18N = True
-USE_TZ = True
-
-LANGUAGES = [
-    ('ru', 'Russian'),
-    ('en', 'English'),
-]
-
-LOCALE_PATHS = [BASE_DIR / 'locale']
-
-
-# ==============================================
-# STATIC & MEDIA FILES
-# ==============================================
-
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# Cloud Storage (S3/Cloudinary) - uncomment for production
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-# AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
-# AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
-# AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='eu-central-1')
-# AWS_DEFAULT_ACL = 'public-read'
-# AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-
-
-# ==============================================
-# CUSTOM USER MODEL
-# ==============================================
-
-AUTH_USER_MODEL = 'users.User'
-
-
-# ==============================================
-# DEFAULT PRIMARY KEY
-# ==============================================
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# ==============================================
-# REST FRAMEWORK
-# ==============================================
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/minute',
-        'user': '1000/minute',
-    },
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ],
-    'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
-}
-
+# ... (skipped content) ...
 
 # ==============================================
 # CORS CONFIGURATION
@@ -269,7 +36,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:8000,http://127.0.0.1:8000',
+    default='http://localhost:8000,http://127.0.0.1:8000,https://abakmarket.store,https://www.abakmarket.store,https://abak-market.onrender.com',
     cast=Csv()
 )
 
@@ -282,7 +49,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost:8000,http://127.0.0.1:8000,https://abak-market.onrender.com',
+    default='http://localhost:8000,http://127.0.0.1:8000,https://abak-market.onrender.com,https://abakmarket.store,https://www.abakmarket.store',
     cast=Csv()
 )
 
