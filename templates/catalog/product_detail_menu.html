@@ -33,397 +33,338 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/menu.css' %}">
     <style>
-        /* Product detail styles */
+        /* Premium Product Detail Styles */
+        .product-page-wrapper {
+            background: var(--menu-bg-light);
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
         .product-header {
             position: relative;
+            width: 100%;
+            background: white;
+            line-height: 0;
         }
 
         .product-back {
-            position: absolute;
-            top: var(--menu-spacing-md);
-            left: var(--menu-spacing-md);
-            width: 40px;
-            height: 40px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: 50%;
             text-decoration: none;
-            font-size: 1.25rem;
-            box-shadow: 0 2px 10px var(--menu-shadow);
-            z-index: 10;
+            color: var(--menu-text-dark);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .product-back:active {
+            transform: scale(0.9);
+        }
+
+        .product-image-container {
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+            background: #FDF9F4;
         }
 
         .product-image-main {
             width: 100%;
-            aspect-ratio: 1;
+            height: 100%;
             object-fit: cover;
-            background: var(--menu-bg-light);
         }
 
-        .product-badges {
-            position: absolute;
-            top: var(--menu-spacing-md);
-            right: var(--menu-spacing-md);
-            display: flex;
-            flex-direction: column;
-            gap: var(--menu-spacing-xs);
-        }
-
-        .product-badge-detail {
-            padding: 6px 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border-radius: var(--menu-radius-sm);
-            text-transform: uppercase;
-        }
-
-        .product-badge-detail.promo {
-            background: #E74C3C;
-            color: white;
-        }
-
-        .product-badge-detail.new {
-            background: #27AE60;
-            color: white;
-        }
-
-        .product-badge-detail.popular {
-            background: #F39C12;
-            color: white;
-        }
-
-        /* Product info */
-        .product-info {
-            padding: var(--menu-spacing-lg);
-            background: var(--menu-card-bg);
-            border-radius: var(--menu-radius) var(--menu-radius) 0 0;
-            margin-top: -20px;
+        .product-info-card {
+            background: white;
+            border-radius: 32px 32px 0 0;
+            margin-top: -30px;
             position: relative;
+            z-index: 10;
+            padding: 30px 24px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.03);
         }
 
-        .product-category-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--menu-bg);
-            color: var(--menu-text-medium);
+        .product-badge-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            padding: 6px 14px;
             font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: var(--menu-radius-sm);
-            margin-bottom: var(--menu-spacing-sm);
+            font-weight: 800;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-category {
+            background: #FDF9F4;
+            color: var(--menu-accent-dark);
+            border: 1px solid rgba(196, 149, 106, 0.2);
+        }
+
+        .tag-promo {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .tag-new {
+            background: #f0fdf4;
+            color: #22c55e;
         }
 
         .product-title {
-            font-family: var(--menu-font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--menu-text-dark);
-            margin-bottom: var(--menu-spacing-sm);
-            line-height: 1.3;
-        }
-
-        .product-meta {
-            display: flex;
-            align-items: center;
-            gap: var(--menu-spacing-md);
-            margin-bottom: var(--menu-spacing-md);
-            color: var(--menu-text-light);
-            font-size: 0.875rem;
-        }
-
-        .product-meta-item {
-            display: flex;
-            align-items: center;
-            gap: var(--menu-spacing-xs);
-        }
-
-        .product-price-block {
-            display: flex;
-            align-items: baseline;
-            gap: var(--menu-spacing-sm);
-            margin-bottom: var(--menu-spacing-lg);
-        }
-
-        .product-price-current {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 800;
             color: var(--menu-text-dark);
+            line-height: 1.2;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
 
-        .product-price-currency {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .product-price-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
-        .product-price-old {
-            font-size: 1.125rem;
+        .current-price {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--menu-accent-dark);
+        }
+
+        .old-price {
+            font-size: 1.25rem;
             color: var(--menu-text-light);
             text-decoration: line-through;
+            opacity: 0.6;
         }
 
-        .product-discount {
-            padding: 4px 8px;
-            background: #E74C3C;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border-radius: var(--menu-radius-sm);
-        }
-
-        .product-description {
-            font-size: 0.9375rem;
+        .product-desc {
+            font-size: 1rem;
             color: var(--menu-text-medium);
-            line-height: 1.7;
-            margin-bottom: var(--menu-spacing-lg);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
         }
 
-        /* Product details section */
-        .product-details {
-            padding: var(--menu-spacing-md);
-            background: var(--menu-bg-light);
-            border-radius: var(--menu-radius-sm);
-            margin-bottom: var(--menu-spacing-lg);
-        }
-
-        .product-details-title {
-            font-weight: 700;
-            font-size: 0.9375rem;
-            color: var(--menu-text-dark);
-            margin-bottom: var(--menu-spacing-sm);
-        }
-
-        .product-details-list {
+        .info-grid {
             display: grid;
-            gap: var(--menu-spacing-sm);
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 30px;
         }
 
-        .product-details-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.875rem;
+        .info-item {
+            background: #FDF9F4;
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.02);
         }
 
-        .product-details-label {
+        .info-label {
+            font-size: 0.7rem;
             color: var(--menu-text-light);
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 4px;
         }
 
-        .product-details-value {
-            font-weight: 600;
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 700;
             color: var(--menu-text-dark);
         }
 
-        /* Order section */
-        .product-order {
+        .order-bar-fixed {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            padding: var(--menu-spacing-md);
-            background: var(--menu-card-bg);
-            box-shadow: 0 -4px 20px var(--menu-shadow);
+            background: white;
+            padding: 20px 24px 34px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
             display: flex;
-            gap: var(--menu-spacing-md);
             align-items: center;
+            gap: 20px;
             z-index: 1000;
+            border-radius: 30px 30px 0 0;
         }
 
-        .product-order-price {
-            flex-shrink: 0;
-        }
-
-        .product-order-price-value {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--menu-text-dark);
-        }
-
-        .product-order-price-weight {
-            font-size: 0.75rem;
-            color: var(--menu-text-light);
-        }
-
-        .product-order-btn {
+        .btn-order-disabled {
             flex: 1;
+            background: #f1f5f9;
+            color: #94a3b8;
+            padding: 18px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--menu-spacing-sm);
-            padding: var(--menu-spacing-md);
-            background: #bdc3c7;
-            /* Disabled grey color */
-            color: white;
-            font-weight: 700;
-            font-size: 1rem;
-            border-radius: var(--menu-radius);
+            gap: 10px;
             text-decoration: none;
-            cursor: default;
-            transition: all 0.2s ease;
+            cursor: not-allowed;
+            border: 1px solid #e2e8f0;
         }
 
-        .product-order-btn svg {
-            width: 1.25rem;
-            height: 1.25rem;
-            fill: currentColor;
-        }
-
-        /* Related products */
-        .related-section {
-            padding: var(--menu-spacing-lg);
-            padding-bottom: 100px;
-        }
-
-        .related-title {
-            font-family: var(--menu-font-display);
+        .section-title {
+            padding: 0 24px;
             font-size: 1.25rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--menu-text-dark);
-            margin-bottom: var(--menu-spacing-md);
-            text-align: center;
-        }
-
-        body {
-            padding-bottom: 80px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body class="menu-page">
-    <!-- Product Header with Image -->
-    <header class="product-header">
-        <a href="javascript:history.back()" class="product-back">←</a>
+    <div class="product-page-wrapper">
+        <!-- Back Navigation -->
+        <a href="javascript:history.back()" class="product-back">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </a>
 
-        {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
-        {% else %}
-        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" class="product-image-main">
-        {% endif %}
+        <!-- Product Image -->
+        <header class="product-header">
+            <div class="product-image-container">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F5E6D3;color:#A67C52;font-size:4rem;">
+                    🍽️</div>
+                {% endif %}
+            </div>
+        </header>
 
-        <div class="product-badges">
-            {% if product.is_promotional %}
-            <span class="product-badge-detail promo">-{{ product.discount_percent }}%</span>
-            {% endif %}
-            {% if product.is_new %}
-            <span class="product-badge-detail new">Новинка</span>
-            {% endif %}
-            {% if product.is_featured %}
-            <span class="product-badge-detail popular">Хит</span>
-            {% endif %}
-        </div>
-    </header>
-
-    <div class="menu-container" style="margin-top: 20px; margin-bottom: -10px;">
         <!-- Search Bar -->
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
-                <input type="text" name="q" class="search-input" placeholder="Найти что-то еще..." autocomplete="off">
-            </form>
+        <div class="menu-container" style="margin-top: 25px; margin-bottom: 30px;">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
+                    <input type="text" name="q" class="search-input" placeholder="Найти что-то еще..."
+                        autocomplete="off">
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Product Info -->
-    <div class="product-info">
-        <span class="product-category-tag">{{ product.category.icon }} {{ product.category.name }}</span>
+        <!-- Product Info Card -->
+        <article class="product-info-card">
+            <div class="product-badge-row">
+                <span class="tag tag-category">{{ product.category.icon }} {{ product.category.name }}</span>
+                {% if product.is_promotional %}
+                <span class="tag tag-promo">-{{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
 
-        <h1 class="product-title">{{ product.name }}</h1>
+            <h1 class="product-title">{{ product.name }}</h1>
 
-        <div class="product-meta">
-            {% if product.weight %}
-            <span class="product-meta-item">📦 {{ product.weight }}</span>
+            <div class="product-price-row">
+                <span class="current-price">{{ product.formatted_price }}</span>
+                {% if product.old_price %}
+                <span class="old-price">{{ product.formatted_old_price }}</span>
+                {% endif %}
+            </div>
+
+            {% if product.description %}
+            <div class="product-desc">
+                {{ product.description|linebreaks }}
+            </div>
             {% endif %}
-            {% if product.calories %}
-            <span class="product-meta-item">🔥 {{ product.calories }} ккал</span>
-            {% endif %}
-        </div>
 
-        <div class="product-price-block">
-            <span class="product-price-current">{{ product.formatted_price }}</span>
-            {% if product.old_price %}
-            <span class="product-price-old">{{ product.formatted_old_price }}</span>
-            <span class="product-discount">-{{ product.discount_percent }}%</span>
-            {% endif %}
-        </div>
-
-        {% if product.description %}
-        <div class="product-description">
-            {{ product.description|linebreaks }}
-        </div>
-        {% endif %}
-
-        {% if product.ingredients or product.weight or product.calories %}
-        <div class="product-details">
-            <div class="product-details-title">Информация о блюде</div>
-            <div class="product-details-list">
+            <!-- Specific Info Grid -->
+            <div class="info-grid">
                 {% if product.weight %}
-                <div class="product-details-item">
-                    <span class="product-details-label">Порция</span>
-                    <span class="product-details-value">{{ product.weight }}</span>
+                <div class="info-item">
+                    <div class="info-label">Вес / Объем</div>
+                    <div class="info-value">{{ product.weight }}</div>
                 </div>
                 {% endif %}
                 {% if product.calories %}
-                <div class="product-details-item">
-                    <span class="product-details-label">Калорийность</span>
-                    <span class="product-details-value">{{ product.calories }} ккал / 100г</span>
-                </div>
-                {% endif %}
-                {% if product.ingredients %}
-                <div class="product-details-item" style="flex-direction: column; gap: 4px;">
-                    <span class="product-details-label">Состав:</span>
-                    <span class="product-details-value" style="font-weight: 400;">{{ product.ingredients }}</span>
+                <div class="info-item">
+                    <div class="info-label">Энерг. ценность</div>
+                    <div class="info-value">{{ product.calories }} ккал</div>
                 </div>
                 {% endif %}
             </div>
-        </div>
-        {% endif %}
-    </div>
 
-    <!-- Related Products -->
-    {% if related_products %}
-    <section class="related-section">
-        <h2 class="related-title">Похожие блюда</h2>
-        <div class="menu-grid">
-            {% for related in related_products %}
-            <a href="{% url 'catalog:product' related.slug %}" class="menu-card">
-                <div class="menu-card-image">
-                    {% if related.image %}
-                    <img src="{{ related.image.url }}" alt="{{ related.name }}" loading="lazy">
-                    {% else %}
-                    <img src="{% static 'images/no-image.png' %}" alt="{{ related.name }}" loading="lazy">
-                    {% endif %}
+            {% if product.ingredients %}
+            <div style="margin-top: 20px;">
+                <div class="info-label">Состав</div>
+                <div style="font-size: 0.95rem; color: var(--menu-text-medium); line-height: 1.5;">
+                    {{ product.ingredients }}
                 </div>
-                <div class="menu-card-content">
-                    <div class="menu-card-price">
-                        {{ related.formatted_price }}
-                    </div>
-                    <h3 class="menu-card-name">{{ related.name }}</h3>
-                    {% if related.weight %}
-                    <span class="menu-card-weight">{{ related.weight }}</span>
-                    {% endif %}
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Fixed Order Button -->
-    <div class="product-order">
-        <div class="product-order-price">
-            <div class="product-order-price-value">{{ product.formatted_price }}</div>
-            {% if product.weight %}
-            <div class="product-order-price-weight">{{ product.weight }}</div>
+            </div>
             {% endif %}
+        </article>
+
+        <!-- Related Products Section -->
+        {% if related_products %}
+        <section style="margin-top: 40px; margin-bottom: 40px;">
+            <h2 class="section-title">Вам также может понравиться</h2>
+            <div class="menu-container">
+                <div class="menu-grid">
+                    {% for related in related_products %}
+                    <a href="{% url 'catalog:product' related.slug %}" class="menu-card">
+                        <div class="menu-card-image">
+                            {% if related.image %}
+                            <img src="{{ related.image.url }}" alt="{{ related.name }}" loading="lazy">
+                            {% else %}
+                            <div
+                                style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F5E6D3;font-size:2rem;">
+                                🍽️</div>
+                            {% endif %}
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-price">{{ related.formatted_price }}</div>
+                            <h3 class="menu-card-name">{{ related.name }}</h3>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Fixed Order Bar -->
+        <div class="order-bar-fixed">
+            <div style="flex-shrink:0;">
+                <div style="font-size: 1.25rem; font-weight: 900; color: var(--menu-text-dark);">{{
+                    product.formatted_price }}</div>
+                <div style="font-size: 0.75rem; color: var(--menu-text-light);">{{ product.weight|default:'' }}</div>
+            </div>
+            <a href="javascript:void(0)" class="btn-order-disabled">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                Скоро в продаже
+            </a>
         </div>
-        <!-- DISABLED BUTTON -->
-        <a href="javascript:void(0)" class="product-order-btn">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
-            </svg>
-            Заказ скоро доступен
-        </a>
     </div>
+
     <!-- Smart Search (autocomplete) -->
     <script src="{% static 'js/search.js' %}"></script>
 </body>

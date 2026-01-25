@@ -424,20 +424,21 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
+            # This is key for Windows terminals to avoid Unicode crashes
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': LOG_LEVEL,
+            'level': 'INFO',
             'propagate': True,
         },
         'apps.whatsapp_bot': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
         'celery': {
