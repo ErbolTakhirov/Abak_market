@@ -20,8 +20,9 @@
     --menu-shadow: rgba(139, 115, 85, 0.15);
 
     /* Typography */
-    --menu-font: 'Inter', 'Segoe UI', sans-serif;
-    --menu-font-display: 'Playfair Display', 'Georgia', serif;
+    --menu-font: 'Inter', system-ui, -apple-system, sans-serif;
+    --menu-font-display: 'Inter', 'Playfair Display', serif;
+    /* Use Inter as fallback for display too */
 
     /* Spacing */
     --menu-spacing-xs: 0.25rem;
@@ -29,10 +30,32 @@
     --menu-spacing-md: 1rem;
     --menu-spacing-lg: 1.5rem;
     --menu-spacing-xl: 2rem;
+    --menu-spacing-2xl: 3rem;
 
     /* Border Radius */
-    --menu-radius: 16px;
-    --menu-radius-sm: 8px;
+    --menu-radius: 20px;
+    /* Slightly rounder for modern feel */
+    --menu-radius-sm: 10px;
+
+    /* Effects */
+    --menu-glass: rgba(255, 255, 255, 0.8);
+    --menu-glass-dark: rgba(44, 24, 16, 0.8);
+}
+
+/* Base resets for typography consistency */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+    font-family: var(--menu-font) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==============================================
@@ -55,9 +78,12 @@
    ============================================== */
 .menu-header {
     text-align: center;
-    padding: var(--menu-spacing-xl) 0;
-    background: linear-gradient(180deg, var(--menu-accent) 0%, var(--menu-accent-dark) 100%);
-    margin-bottom: var(--menu-spacing-lg);
+    padding: var(--menu-spacing-lg) 0;
+    background: var(--menu-accent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: var(--menu-spacing-md);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -131,28 +157,15 @@
 
 .menu-category-title {
     font-family: var(--menu-font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 800;
     color: var(--menu-text-dark);
     margin: 0;
-    position: relative;
-    display: inline-block;
-    padding-bottom: var(--menu-spacing-sm);
+    letter-spacing: -0.5px;
 }
 
 .menu-category-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 2px;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            var(--menu-text-dark) 20%,
-            var(--menu-text-dark) 80%,
-            transparent 100%);
+    display: none;
 }
 
 /* Decorative line with ornament */
@@ -327,43 +340,40 @@
     margin-bottom: var(--menu-spacing-sm);
 }
 
-/* ==============================================
-   SEARCH BAR
-   ============================================== */
-.menu-search {
+/* Improved Search Container */
+.search-container {
     position: relative;
-    margin-bottom: var(--menu-spacing-lg);
-}
-
-.menu-search input {
     width: 100%;
-    padding: var(--menu-spacing-md) var(--menu-spacing-lg);
-    padding-left: 3rem;
-    background: var(--menu-card-bg);
-    border: none;
-    border-radius: var(--menu-radius);
-    font-size: 1rem;
-    color: var(--menu-text-dark);
-    box-shadow: 0 2px 12px var(--menu-shadow);
-    transition: all 0.2s ease;
+    margin: 0 auto var(--menu-spacing-lg) auto;
 }
 
-.menu-search input:focus {
-    outline: none;
-    box-shadow: 0 4px 20px var(--menu-shadow);
+.search-input {
+    width: 100%;
+    padding: 1rem 1.25rem 1rem 3.5rem !important;
+    background: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 16px !important;
+    font-size: 1rem !important;
+    font-family: var(--menu-font) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.menu-search input::placeholder {
-    color: var(--menu-text-light);
+.search-input:focus {
+    outline: none !important;
+    border-color: var(--menu-accent) !important;
+    box-shadow: 0 8px 25px rgba(196, 149, 106, 0.15) !important;
+    transform: translateY(-1px);
 }
 
-.menu-search-icon {
+.search-icon {
     position: absolute;
-    left: var(--menu-spacing-md);
+    left: 1.25rem;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 5;
+    font-size: 1.1rem;
     color: var(--menu-text-light);
-    font-size: 1.25rem;
 }
 
 /* ==============================================
@@ -650,6 +660,83 @@
     border-radius: 10px;
     font-size: 0.6875rem;
     margin-left: var(--menu-spacing-xs);
+}
+
+/* ==============================================
+   BOTTOM NAVIGATION - Mobile App Style
+   ============================================== */
+.menu-nav-bottom,
+.home-nav,
+.category-nav-bottom,
+.catalog-nav-bottom {
+    display: flex !important;
+    justify-content: space-around !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    padding: 12px 10px 24px !important;
+    /* Extra bottom padding for safe area */
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08) !important;
+    z-index: 1000 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+    border-radius: 24px 24px 0 0 !important;
+}
+
+.menu-nav-bottom a,
+.home-nav a,
+.category-nav-bottom a,
+.catalog-nav-bottom a {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    color: var(--menu-text-light) !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    gap: 6px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex: 1;
+    position: relative;
+}
+
+.menu-nav-bottom a span,
+.home-nav a span,
+.category-nav-bottom a span,
+.catalog-nav-bottom a span {
+    font-size: 1.35rem !important;
+    transition: transform 0.3s ease !important;
+}
+
+.menu-nav-bottom a.active,
+.home-nav a.active,
+.category-nav-bottom a.active,
+.catalog-nav-bottom a.active {
+    color: var(--menu-accent-dark) !important;
+}
+
+.menu-nav-bottom a.active span,
+.home-nav a.active span {
+    transform: translateY(-4px) scale(1.1);
+}
+
+.menu-nav-bottom a.active::after,
+.home-nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    width: 4px;
+    height: 4px;
+    background: var(--menu-accent);
+    border-radius: 50%;
+}
+
+/* Base Body Padding Fix */
+body {
+    padding-bottom: 90px !important;
 }
 
 /* ==============================================

@@ -312,6 +312,16 @@
         </div>
     </header>
 
+    <div class="menu-container" style="margin-top: 20px; margin-bottom: -10px;">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
+                <input type="text" name="q" class="search-input" placeholder="Найти что-то еще..." autocomplete="off">
+            </form>
+        </div>
+    </div>
+
     <!-- Product Info -->
     <div class="product-info">
         <span class="product-category-tag">{{ product.category.icon }} {{ product.category.name }}</span>
@@ -414,6 +424,8 @@
             Заказ скоро доступен
         </a>
     </div>
+    <!-- Smart Search (autocomplete) -->
+    <script src="{% static 'js/search.js' %}"></script>
 </body>
 
 </html>

@@ -229,6 +229,15 @@
     </header>
 
     <div class="menu-container contacts-content">
+        <!-- Search Bar -->
+        <div class="search-container" style="margin-bottom: 30px;">
+            <span class="search-icon">🔍</span>
+            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
+                <input type="text" name="q" class="search-input" placeholder="Найти блюдо или продукт..."
+                    autocomplete="off">
+            </form>
+        </div>
+
         <!-- WhatsApp Card -->
         <div class="contact-card whatsapp">
             <div class="contact-card-header">
@@ -316,15 +325,14 @@
             <span>🍽️</span>
             Меню
         </a>
-        <a href="{% url 'catalog:list' %}">
-            <span>🛒</span>
-            Каталог
-        </a>
+
         <a href="{% url 'contacts' %}" class="active">
             <span>📞</span>
             Контакты
         </a>
     </nav>
+    <!-- Smart Search (autocomplete) -->
+    <script src="{% static 'js/search.js' %}"></script>
 </body>
 
 </html>

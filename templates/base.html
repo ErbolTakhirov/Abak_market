@@ -46,8 +46,7 @@
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="{% url 'home' %}"
                             class="nav-link {% if request.path == '/' %}active{% endif %}">Главная</a></li>
-                    <li><a href="{% url 'catalog:list' %}"
-                            class="nav-link {% if 'catalog' in request.path %}active{% endif %}">Каталог</a></li>
+
                     <li><a href="{% url 'contacts' %}"
                             class="nav-link {% if 'contacts' in request.path %}active{% endif %}">Контакты</a></li>
                 </ul>
@@ -95,7 +94,7 @@
                     <h4>Навигация</h4>
                     <ul>
                         <li><a href="{% url 'home' %}">Главная</a></li>
-                        <li><a href="{% url 'catalog:list' %}">Каталог</a></li>
+
                         <li><a href="{% url 'contacts' %}">Контакты</a></li>
                     </ul>
                 </div>

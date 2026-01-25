@@ -10,7 +10,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Count
 
-from .models import Category, Product, ProductImage, PDFCatalog
+from .models import Category, Product, ProductImage, PDFCatalog, SearchSynonym, PopularSearch
 
 
 class ProductImageInline(admin.TabularInline):
@@ -73,7 +73,7 @@ class ProductAdmin(admin.ModelAdmin):
     
     list_display = (
         'image_preview', 'name', 'category', 'price_display',
-        'is_available', 'is_featured', 'is_promotional', 'updated_at'
+        'is_available', 'is_featured', 'is_promotional', 'view_count', 'updated_at'
     )
     list_display_links = ('name',)
     list_filter = (
@@ -85,7 +85,7 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ('order', '-created_at')
     list_editable = ('is_available', 'is_featured', 'is_promotional')
     date_hierarchy = 'created_at'
-    readonly_fields = ('created_at', 'updated_at', 'image_preview_large')
+    readonly_fields = ('created_at', 'updated_at', 'image_preview_large', 'view_count', 'purchase_count')
     raw_id_fields = ('category',)
     inlines = [ProductImageInline]
     
@@ -108,6 +108,10 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         (_('SEO'), {
             'fields': ('meta_title', 'meta_description'),
+            'classes': ('collapse',)
+        }),
+        (_('Статистика'), {
+            'fields': ('view_count', 'purchase_count'),
             'classes': ('collapse',)
         }),
         (_('Даты'), {
@@ -198,3 +202,34 @@ class PDFCatalogAdmin(admin.ModelAdmin):
 
 # Import models for admin_order_field
 from django.db import models
+
+
+# ==============================================
+# SEARCH ADMIN
+# ==============================================
+
+@admin.register(SearchSynonym)
+class SearchSynonymAdmin(admin.ModelAdmin):
+    """
+    Админка для синонимов поиска.
+    Здесь можно добавлять альтернативные написания слов и опечатки.
+    """
+    list_display = ('word', 'synonym')
+    list_filter = ('word',)
+    search_fields = ('word', 'synonym')
+    ordering = ('word', 'synonym')
+
+
+@admin.register(PopularSearch)
+class PopularSearchAdmin(admin.ModelAdmin):
+    """
+    Админка для просмотра популярных поисковых запросов.
+    """
+    list_display = ('query', 'search_count', 'results_count', 'last_searched')
+    list_filter = ('last_searched',)
+    search_fields = ('query',)
+    ordering = ('-search_count',)
+    readonly_fields = ('query', 'search_count', 'results_count', 'last_searched')
+    
+    def has_add_permission(self, request):
+        return False  # Запросы создаются автоматически

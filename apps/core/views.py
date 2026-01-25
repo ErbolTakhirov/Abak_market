@@ -51,6 +51,7 @@ class HomeView(TemplateView):
     """
     Home page view with featured products and promotions.
     Restaurant-style design.
+    Uses RecommendationService for popular products.
     """
     template_name = 'pages/home_menu.html'
     
@@ -59,8 +60,20 @@ class HomeView(TemplateView):
         
         # Import here to avoid circular imports
         from apps.catalog.models import Product, Category
+        from apps.catalog.search_service import RecommendationService
         
-        # Get featured products (cached for 15 minutes)
+        # Initialize recommendation service
+        service = RecommendationService()
+        
+        # Get popular products (by views and purchases)
+        cache_key = 'home_popular_products'
+        popular_products = cache.get(cache_key)
+        
+        if popular_products is None:
+            popular_products = service.get_popular_products(limit=8)
+            cache.set(cache_key, popular_products, 60 * 10)  # 10 minutes
+        
+        # Get featured products (manually marked)
         cache_key = 'home_featured_products'
         featured_products = cache.get(cache_key)
         
@@ -78,13 +91,16 @@ class HomeView(TemplateView):
         promo_products = cache.get(cache_key)
         
         if promo_products is None:
-            promo_products = list(
-                Product.objects.filter(
-                    is_available=True,
-                    is_promotional=True
-                ).select_related('category')[:4]
-            )
+            promo_products = service.get_promo_products(limit=4)
             cache.set(cache_key, promo_products, 60 * 15)
+        
+        # Get new products
+        cache_key = 'home_new_products'
+        new_products = cache.get(cache_key)
+        
+        if new_products is None:
+            new_products = service.get_new_products(limit=4)
+            cache.set(cache_key, new_products, 60 * 15)
         
         # Get categories for navigation
         cache_key = 'home_categories'
@@ -98,8 +114,10 @@ class HomeView(TemplateView):
             cache.set(cache_key, categories, 60 * 15)
         
         context.update({
-            'featured_products': featured_products,
+            'popular_products': popular_products,  # NEW: by view/purchase count
+            'featured_products': featured_products,  # Marked as featured
             'promo_products': promo_products,
+            'new_products': new_products,  # NEW: new arrivals
             'categories': categories,
             'company_name': settings.COMPANY_NAME,
             'company_phone': settings.COMPANY_PHONE,
@@ -107,3 +125,4 @@ class HomeView(TemplateView):
         })
         
         return context
+

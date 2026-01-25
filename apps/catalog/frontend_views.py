@@ -18,6 +18,7 @@ class MenuView(TemplateView):
     """
     Restaurant-style menu page with products grouped by category.
     Displays products in a 2x2 grid with warm beige design.
+    Now supports smart search with fuzzy matching.
     """
     template_name = 'catalog/menu.html'
     
@@ -27,7 +28,41 @@ class MenuView(TemplateView):
         # Get filter parameters
         category_slug = self.request.GET.get('category')
         filter_type = self.request.GET.get('filter')
+        search_query = self.request.GET.get('q', '').strip()
         
+        # Import search service
+        from .search_service import SmartSearchService
+        
+        # If there's a search query, use smart search
+        if search_query:
+            service = SmartSearchService()
+            search_result = service.search(search_query, category_slug, limit=50)
+            
+            # Get categories for navigation
+            categories = Category.objects.filter(
+                is_active=True
+            ).order_by('order', 'name')
+            
+            # Group search results by category
+            products_by_category = OrderedDict()
+            for product in search_result['products']:
+                cat = product.category
+                if cat not in products_by_category:
+                    products_by_category[cat] = []
+                products_by_category[cat].append(product)
+            
+            context['categories'] = categories
+            context['products_by_category'] = products_by_category
+            context['current_category'] = category_slug
+            context['current_filter'] = filter_type
+            context['search_query'] = search_query
+            context['search_total'] = search_result['total']
+            context['search_suggestions'] = search_result['suggestions']
+            context['company_whatsapp'] = getattr(settings, 'COMPANY_WHATSAPP', '')
+            
+            return context
+        
+        # No search - regular mode
         # Base queryset
         products_qs = Product.objects.filter(
             is_available=True
@@ -70,6 +105,7 @@ class MenuView(TemplateView):
         context['products_by_category'] = products_by_category
         context['current_category'] = category_slug
         context['current_filter'] = filter_type
+        context['search_query'] = ''
         context['company_whatsapp'] = getattr(settings, 'COMPANY_WHATSAPP', '')
         
         return context
@@ -174,6 +210,7 @@ class CategoryDetailView(DetailView):
 class ProductDetailView(DetailView):
     """
     Product detail page with restaurant-style design.
+    Uses RecommendationService for similar products.
     """
     model = Product
     template_name = 'catalog/product_detail_menu.html'
@@ -185,14 +222,24 @@ class ProductDetailView(DetailView):
             is_available=True
         ).select_related('category').prefetch_related('images')
     
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        
+        # Increment view count (async for performance)
+        from .search_service import increment_product_view
+        increment_product_view(self.object.id)
+        
+        return response
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Related products
-        related = Product.objects.filter(
-            category=self.object.category,
-            is_available=True
-        ).exclude(id=self.object.id)[:4]
+        # Use RecommendationService for similar products
+        from .search_service import RecommendationService
+        service = RecommendationService()
+        
+        # Get similar products with smart matching
+        related = service.get_similar_products(self.object, limit=4)
         
         context['related_products'] = related
         context['company_whatsapp'] = settings.COMPANY_WHATSAPP

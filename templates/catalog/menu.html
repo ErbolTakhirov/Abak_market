@@ -29,7 +29,7 @@
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=1.1">
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 </head>
 
@@ -41,9 +41,49 @@
     </header>
 
     <div class="menu-container">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
+                <input type="text" name="q" class="search-input" placeholder="Поиск товаров..."
+                    value="{{ search_query }}" autocomplete="off">
+                {% if current_category %}
+                <input type="hidden" name="category" value="{{ current_category }}">
+                {% endif %}
+            </form>
+        </div>
+
+        {% if search_query %}
+        <!-- Search Results Header -->
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f4ef; border-radius: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 0.875rem; color: #888;">Результаты поиска:</span>
+                    <strong style="margin-left: 8px;">«{{ search_query }}»</strong>
+                    <span style="margin-left: 8px; color: #888;">({{ search_total }} найдено)</span>
+                </div>
+                <a href="{% url 'catalog:menu' %}" style="color: #c4a574; font-weight: 600; text-decoration: none;">
+                    ✕ Сбросить
+                </a>
+            </div>
+            {% if search_suggestions %}
+            <div style="margin-top: 12px; font-size: 0.875rem;">
+                <span style="color: #888;">Похожие запросы:</span>
+                {% for suggestion in search_suggestions %}
+                <a href="{% url 'catalog:menu' %}?q={{ suggestion.query }}"
+                    style="margin-left: 8px; color: #c4a574; text-decoration: underline;">
+                    {{ suggestion.query }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <!-- Category Navigation -->
         <nav class="menu-nav">
-            <a href="{% url 'catalog:menu' %}" class="menu-nav-item {% if not current_category %}active{% endif %}">
+            <a href="{% url 'catalog:menu' %}"
+                class="menu-nav-item {% if not current_category and not search_query %}active{% endif %}">
                 Все
             </a>
             {% for category in categories %}
@@ -142,9 +182,25 @@
         {% else %}
         <!-- Empty State -->
         <div class="menu-empty">
-            <div class="menu-empty-icon">🍽️</div>
+            <div class="menu-empty-icon">{% if search_query %}🔍{% else %}🍽️{% endif %}</div>
+            {% if search_query %}
+            <h3>По запросу «{{ search_query }}» ничего не найдено</h3>
+            <p>Попробуйте изменить запрос или выберите категорию</p>
+            {% if search_suggestions %}
+            <div style="margin-top: 16px;">
+                <p style="font-size: 0.875rem; color: #888;">Возможно, вы искали:</p>
+                {% for suggestion in search_suggestions %}
+                <a href="{% url 'catalog:menu' %}?q={{ suggestion.query }}"
+                    style="display: inline-block; margin: 4px; padding: 8px 16px; background: #f8f4ef; border-radius: 20px; color: #333; text-decoration: none; font-size: 0.875rem;">
+                    {{ suggestion.query }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
             <h3>Блюда не найдены</h3>
             <p>Попробуйте выбрать другую категорию</p>
+            {% endif %}
             <a href="{% url 'catalog:menu' %}" class="menu-order-btn"
                 style="max-width: 200px; margin: var(--menu-spacing-lg) auto 0;">
                 Показать всё
@@ -168,11 +224,6 @@
             style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
             <span style="font-size:1.25rem;">🏠</span>
             Главная
-        </a>
-        <a href="{% url 'catalog:menu' %}"
-            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-accent);font-size:0.6875rem;font-weight:600;gap:4px;">
-            <span style="font-size:1.25rem;">🍽️</span>
-            Меню
         </a>
         <a href="#" class="open-cart"
             style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
@@ -228,6 +279,9 @@
 
         categories.forEach(cat => observer.observe(cat));
     </script>
+
+    <!-- Smart Search (autocomplete) -->
+    <script src="{% static 'js/search.js' %}"></script>
 </body>
 
 </html>

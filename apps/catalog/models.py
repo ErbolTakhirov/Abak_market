@@ -238,6 +238,18 @@ class Product(models.Model):
         blank=True
     )
     
+    # Popularity tracking for recommendations
+    view_count = models.PositiveIntegerField(
+        _('Количество просмотров'),
+        default=0,
+        help_text=_('Автоматически увеличивается при просмотре товара')
+    )
+    purchase_count = models.PositiveIntegerField(
+        _('Количество покупок'),
+        default=0,
+        help_text=_('Увеличивается при добавлении в заказ')
+    )
+    
     # Ordering
     order = models.PositiveIntegerField(
         _('Порядок'),
@@ -405,3 +417,101 @@ class PDFCatalog(models.Model):
         else:
             queryset = queryset.filter(category__isnull=True)
         return queryset.first()
+
+
+# ==============================================
+# SEARCH AND RECOMMENDATIONS MODELS
+# ==============================================
+
+class SearchSynonym(models.Model):
+    """
+    Модель для хранения синонимов и альтернативных написаний товаров.
+    Используется для улучшения поиска (fuzzy search).
+    """
+    word = models.CharField(
+        _('Слово'),
+        max_length=100,
+        db_index=True,
+        help_text=_('Основное правильное написание')
+    )
+    synonym = models.CharField(
+        _('Синоним/Альтернатива'),
+        max_length=100,
+        db_index=True,
+        help_text=_('Альтернативное написание или опечатка')
+    )
+    
+    class Meta:
+        verbose_name = _('Синоним для поиска')
+        verbose_name_plural = _('Синонимы для поиска')
+        unique_together = ['word', 'synonym']
+    
+    def __str__(self):
+        return f"{self.synonym} → {self.word}"
+    
+    @classmethod
+    def get_normalized_queries(cls, query):
+        """Возвращает список вариантов запроса с учетом синонимов."""
+        words = query.lower().split()
+        variants = [query.lower()]
+        
+        for synonym_obj in cls.objects.filter(synonym__in=words):
+            new_query = query.lower().replace(synonym_obj.synonym, synonym_obj.word)
+            if new_query not in variants:
+                variants.append(new_query)
+        
+        return variants
+
+
+class PopularSearch(models.Model):
+    """
+    Хранит популярные поисковые запросы для статистики и подсказок.
+    """
+    query = models.CharField(
+        _('Поисковый запрос'),
+        max_length=200,
+        unique=True,
+        db_index=True
+    )
+    search_count = models.PositiveIntegerField(
+        _('Количество поисков'),
+        default=1
+    )
+    results_count = models.PositiveIntegerField(
+        _('Количество результатов'),
+        default=0
+    )
+    last_searched = models.DateTimeField(
+        _('Последний поиск'),
+        auto_now=True
+    )
+    
+    class Meta:
+        verbose_name = _('Популярный запрос')
+        verbose_name_plural = _('Популярные запросы')
+        ordering = ['-search_count']
+    
+    def __str__(self):
+        return f"{self.query} ({self.search_count}x)"
+    
+    @classmethod
+    def log_search(cls, query, results_count=0):
+        """Логирует поисковый запрос."""
+        query_clean = query.lower().strip()[:200]
+        if len(query_clean) >= 2:
+            obj, created = cls.objects.get_or_create(
+                query=query_clean,
+                defaults={'search_count': 1, 'results_count': results_count}
+            )
+            if not created:
+                obj.search_count += 1
+                obj.results_count = results_count
+                obj.save(update_fields=['search_count', 'results_count', 'last_searched'])
+    
+    @classmethod
+    def get_suggestions(cls, prefix, limit=5):
+        """Возвращает подсказки для автодополнения."""
+        return cls.objects.filter(
+            query__istartswith=prefix.lower(),
+            results_count__gt=0
+        ).order_by('-search_count')[:limit]
