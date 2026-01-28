@@ -94,21 +94,6 @@
             {% endfor %}
         </nav>
 
-        <!-- Filter Pills -->
-        <div class="menu-filters">
-            <a href="{% url 'catalog:menu' %}?filter=popular"
-                class="menu-filter-pill {% if current_filter == 'popular' %}active{% endif %}">
-                ⭐ Популярные
-            </a>
-            <a href="{% url 'catalog:menu' %}?filter=new"
-                class="menu-filter-pill {% if current_filter == 'new' %}active{% endif %}">
-                🆕 Новинки
-            </a>
-            <a href="{% url 'catalog:menu' %}?filter=promo"
-                class="menu-filter-pill {% if current_filter == 'promo' %}active{% endif %}">
-                🔥 Акции
-            </a>
-        </div>
 
         <!-- Products by Category -->
         {% if products_by_category %}
@@ -167,9 +152,19 @@
                                 {% endif %}
                             </div>
 
-                            <button class="menu-card-add-btn add-to-cart-btn" data-id="{{ product.id }}"
-                                data-name="{{ product.name }}" data-price="{{ product.price }}"
-                                data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}">
+                            <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                                data-price="{{ product.price }}"
+                                data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
+                                aria-label="Добавить в корзину"
+                                style="width: 100%; padding: 12px; background: #27AE60; color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; margin-top: 12px; transition: all 0.2s ease;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    <line x1="12" y1="9" x2="12" y2="15"></line>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                </svg>
                                 В корзину
                             </button>
                         </div>
@@ -182,7 +177,7 @@
         {% else %}
         <!-- Empty State -->
         <div class="menu-empty">
-            <div class="menu-empty-icon">{% if search_query %}🔍{% else %}🍽️{% endif %}</div>
+            <div class="menu-empty-icon">🔍</div>
             {% if search_query %}
             <h3>По запросу «{{ search_query }}» ничего не найдено</h3>
             <p>Попробуйте изменить запрос или выберите категорию</p>
@@ -224,6 +219,11 @@
             style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
             <span style="font-size:1.25rem;">🏠</span>
             Главная
+        </a>
+        <a href="{% url 'catalog:list' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">📋</span>
+            Каталог
         </a>
         <a href="#" class="open-cart"
             style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">

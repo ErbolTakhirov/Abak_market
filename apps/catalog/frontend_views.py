@@ -160,7 +160,7 @@ class CatalogListView(ListView):
         if categories is None:
             categories = list(
                 Category.objects.filter(is_active=True)
-                .annotate(products_count=Count('products', filter=Q(products__is_available=True)))
+                .annotate(available_products_count=Count('products', filter=Q(products__is_available=True)))
                 .order_by('order', 'name')
             )
             cache.set(cache_key, categories, 60 * 15)

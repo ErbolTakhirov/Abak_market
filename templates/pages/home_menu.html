@@ -312,9 +312,9 @@
     <!-- Hero Section -->
     <section class="home-hero">
         <div class="home-hero-content">
-            <h1 class="home-logo">🍽️ {{ COMPANY_NAME }}</h1>
+            <h1 class="home-logo">{{ COMPANY_NAME }}</h1>
             <p class="home-tagline">
-                Свежие продукты и готовые блюда с доставкой.<br>
+                Свежие продукты и готовые блюда.<br>
                 Закажите онлайн!
             </p>
 
@@ -327,17 +327,6 @@
                 Заказ в WhatsApp (скоро)
             </a>
 
-            <div class="features-strip">
-                <div class="feature-item">
-                    <span>🚚</span> Доставка
-                </div>
-                <div class="feature-item">
-                    <span>✨</span> Свежее
-                </div>
-                <div class="feature-item">
-                    <span>💰</span> Выгодно
-                </div>
-            </div>
         </div>
     </section>
 
@@ -483,7 +472,7 @@
     <!-- Footer -->
     <footer class="home-footer">
         <div class="menu-container">
-            <div class="home-footer-logo">🍽️ {{ COMPANY_NAME }}</div>
+            <div class="home-footer-logo">{{ COMPANY_NAME }}</div>
             <div class="home-footer-info">
                 📞 <a href="javascript:void(0)" style="cursor: default;">{{ COMPANY_PHONE }}</a><br>
                 📍 {{ COMPANY_ADDRESS }}<br>
@@ -504,6 +493,10 @@
         <a href="{% url 'catalog:menu' %}">
             <span>🍽️</span>
             Меню
+        </a>
+        <a href="{% url 'catalog:list' %}">
+            <span>🛒</span>
+            Каталог
         </a>
         <a href="{% url 'contacts' %}">
             <span>📞</span>
