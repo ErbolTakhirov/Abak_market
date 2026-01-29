@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO -->
+    <title>Меню - {{ COMPANY_NAME }}</title>
+    <meta name="description" content="Меню блюд и напитков {{ COMPANY_NAME }}. Свежие продукты и вкусные блюда.">
+    <meta name="keywords" content="меню, ресторан, кафе, блюда, еда, доставка">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Меню - {{ COMPANY_NAME }}">
+    <meta property="og:description" content="Меню блюд и напитков {{ COMPANY_NAME }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=1.1">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+</head>
+
+<body class="menu-page" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
+    <!-- Header -->
+    <header class="menu-header">
+        <h1>{{ COMPANY_NAME }}</h1>
+        <p class="subtitle">Меню</p>
+    </header>
+
+    <div class="menu-container">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
+                <input type="text" name="q" class="search-input" placeholder="Поиск товаров..."
+                    value="{{ search_query }}" autocomplete="off">
+                {% if current_category %}
+                <input type="hidden" name="category" value="{{ current_category }}">
+                {% endif %}
+            </form>
+        </div>
+
+        {% if search_query %}
+        <!-- Search Results Header -->
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f4ef; border-radius: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 0.875rem; color: #888;">Результаты поиска:</span>
+                    <strong style="margin-left: 8px;">«{{ search_query }}»</strong>
+                    <span style="margin-left: 8px; color: #888;">({{ search_total }} найдено)</span>
+                </div>
+                <a href="{% url 'catalog:menu' %}" style="color: #c4a574; font-weight: 600; text-decoration: none;">
+                    ✕ Сбросить
+                </a>
+            </div>
+            {% if search_suggestions %}
+            <div style="margin-top: 12px; font-size: 0.875rem;">
+                <span style="color: #888;">Похожие запросы:</span>
+                {% for suggestion in search_suggestions %}
+                <a href="{% url 'catalog:menu' %}?q={{ suggestion.query }}"
+                    style="margin-left: 8px; color: #c4a574; text-decoration: underline;">
+                    {{ suggestion.query }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Category Navigation -->
+        <nav class="menu-nav">
+            <a href="{% url 'catalog:menu' %}"
+                class="menu-nav-item {% if not current_category and not search_query %}active{% endif %}">
+                Все
+            </a>
+            {% for category in categories %}
+            <a href="{% url 'catalog:menu' %}?category={{ category.slug }}"
+                class="menu-nav-item {% if current_category == category.slug %}active{% endif %}">
+                {{ category.icon }} {{ category.name }}
+            </a>
+            {% endfor %}
+        </nav>
+
+
+        <!-- Products by Category -->
+        {% if products_by_category %}
+        {% for category, products in products_by_category.items %}
+        <section class="menu-category" id="category-{{ category.slug }}">
+            <!-- Category Header -->
+            <div class="menu-category-header">
+                <h2 class="menu-category-title">{{ category.name }}</h2>
+                <div class="menu-category-divider">
+                    <span class="ornament">◆</span>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="menu-grid">
+                {% for product in products %}
+                <div class="menu-card" id="product-{{ product.id }}">
+                    <!-- Badge -->
+                    {% if product.is_promotional %}
+                    <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
+                    {% elif product.is_new %}
+                    <span class="menu-card-badge new">Новинка</span>
+                    {% elif product.is_featured %}
+                    <span class="menu-card-badge popular">Хит</span>
+                    {% endif %}
+
+                    <!-- Image -->
+                    <a href="{% url 'catalog:product' product.slug %}" class="menu-card-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
+                        {% endif %}
+                    </a>
+
+                    <!-- Content -->
+                    <div class="menu-card-content">
+                        <!-- Title (Top) -->
+                        <h3 class="menu-card-name">{{ product.name }}</h3>
+
+                        <!-- Weight/Description code removed to keep it cleaner, weight is below with price -->
+
+                        <!-- Price & Button (Bottom) -->
+                        <div style="margin-top: auto;">
+
+                            <div class="menu-card-price">
+                                {% if product.old_price %}
+                                <span class="menu-card-old-price">{{ product.formatted_old_price }}</span>
+                                {% endif %}
+                                {{ product.formatted_price }}
+
+                                {% if product.weight %}
+                                <span class="menu-card-weight" style="font-size: 0.8rem; font-weight: normal; margin-left: auto;">{{ product.weight }}</span>
+                                {% endif %}
+                            </div>
+
+                            <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                                data-price="{{ product.price }}"
+                                data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
+                                aria-label="Добавить в корзину"
+                                style="width: 100%; padding: 12px; background: #27AE60; color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; margin-top: 12px; transition: all 0.2s ease;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    <line x1="12" y1="9" x2="12" y2="15"></line>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                </svg>
+                                В корзину
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+        {% else %}
+        <!-- Empty State -->
+        <div class="menu-empty">
+            <div class="menu-empty-icon">🔍</div>
+            {% if search_query %}
+            <h3>По запросу «{{ search_query }}» ничего не найдено</h3>
+            <p>Попробуйте изменить запрос или выберите категорию</p>
+            {% if search_suggestions %}
+            <div style="margin-top: 16px;">
+                <p style="font-size: 0.875rem; color: #888;">Возможно, вы искали:</p>
+                {% for suggestion in search_suggestions %}
+                <a href="{% url 'catalog:menu' %}?q={{ suggestion.query }}"
+                    style="display: inline-block; margin: 4px; padding: 8px 16px; background: #f8f4ef; border-radius: 20px; color: #333; text-decoration: none; font-size: 0.875rem;">
+                    {{ suggestion.query }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <h3>Блюда не найдены</h3>
+            <p>Попробуйте выбрать другую категорию</p>
+            {% endif %}
+            <a href="{% url 'catalog:menu' %}" class="menu-order-btn"
+                style="max-width: 200px; margin: var(--menu-spacing-lg) auto 0;">
+                Показать всё
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Order Button -->
+        <button class="menu-order-btn open-cart">
+            <span style="font-size: 1.25rem; margin-right: 8px;">🛒</span>
+            Открыть корзину
+        </button>
+    </div>
+
+
+
+    <!-- Bottom Navigation -->
+    <nav class="menu-nav-bottom"
+        style="display:flex;justify-content:space-around;background:var(--menu-card-bg);padding:var(--menu-spacing-md);position:fixed;bottom:0;left:0;right:0;box-shadow:0 -4px 20px var(--menu-shadow);z-index:1000;">
+        <a href="{% url 'home' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'catalog:list' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">📋</span>
+            Каталог
+        </a>
+        <a href="#" class="open-cart"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">🛒</span>
+            Корзина
+        </a>
+        <a href="{% url 'contacts' %}"
+            style="display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--menu-text-medium);font-size:0.6875rem;font-weight:600;gap:4px;">
+            <span style="font-size:1.25rem;">📞</span>
+            Контакты
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/cart.js' %}"></script>
+    <!-- Smooth scroll script -->
+    <script>
+        // Add padding for bottom nav
+        document.body.style.paddingBottom = '70px';
+
+        // Smooth scroll to category
+        document.querySelectorAll('.menu-nav-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href.includes('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href.split('#')[1] ? '#' + href.split('#')[1] : null);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for active nav
+        const categories = document.querySelectorAll('.menu-category');
+        const navItems = document.querySelectorAll('.menu-nav-item');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navItems.forEach(item => {
+                        if (item.href.includes(id.replace('category-', ''))) {
+                            item.classList.add('active');
+                        } else if (!item.href.includes('category=')) {
+                            // Keep "Все" active only if no category filter
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        categories.forEach(cat => observer.observe(cat));
+    </script>
+
+    <!-- Smart Search (autocomplete) -->
+    <script src="{% static 'js/search.js' %}"></script>
+</body>
+
+</html>

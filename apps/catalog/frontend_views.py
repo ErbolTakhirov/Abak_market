@@ -20,7 +20,7 @@ class MenuView(TemplateView):
     Displays products in a 2x2 grid with warm beige design.
     Now supports smart search with fuzzy matching.
     """
-    template_name = 'catalog/menu.html'
+    template_name = 'catalog/menu2.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -95,9 +95,13 @@ class MenuView(TemplateView):
                 if category_products:
                     products_by_category[category] = category_products
         else:
-            # All categories mode
+            # All categories mode - Optimized to avoid N+1 queries
+            # Fetch all relevant products in one query
+            all_products = list(products_qs)
+            
             for category in categories:
-                category_products = list(products_qs.filter(category=category))
+                # Filter in Python instead of DB
+                category_products = [p for p in all_products if p.category_id == category.id]
                 if category_products:
                     products_by_category[category] = category_products
         
