@@ -33,39 +33,48 @@ class MenuView(TemplateView):
         # Import search service
         from .search_service import SmartSearchService
         
+        # Base filter for Menu: Only DISHES
+        base_category_filter = Q(is_active=True, category_type=Category.CategoryType.DISHES)
+        
         # If there's a search query, use smart search
         if search_query:
             service = SmartSearchService()
+            # Note: Search service might need updating to support type filtering, 
+            # but for now we filter the results or assume search is global.
+            # Ideally we'd pass a filter to search service.
+            # For immediate fix, let's filter the display categories.
+            
             search_result = service.search(search_query, category_slug, limit=50)
             
-            # Get categories for navigation
-            categories = Category.objects.filter(
-                is_active=True
-            ).order_by('order', 'name')
+            # Get categories for navigation (Only Dishes)
+            categories = Category.objects.filter(base_category_filter).order_by('order', 'name')
             
             # Group search results by category
             products_by_category = OrderedDict()
             for product in search_result['products']:
-                cat = product.category
-                if cat not in products_by_category:
-                    products_by_category[cat] = []
-                products_by_category[cat].append(product)
+                # Only show products from Dish categories in Menu search
+                if product.category.category_type == Category.CategoryType.DISHES:
+                    cat = product.category
+                    if cat not in products_by_category:
+                        products_by_category[cat] = []
+                    products_by_category[cat].append(product)
             
             context['categories'] = categories
             context['products_by_category'] = products_by_category
             context['current_category'] = category_slug
             context['current_filter'] = filter_type
             context['search_query'] = search_query
-            context['search_total'] = search_result['total']
+            context['search_total'] = len([p for p in search_result['products'] if p.category.category_type == Category.CategoryType.DISHES])
             context['search_suggestions'] = search_result['suggestions']
             context['company_whatsapp'] = getattr(settings, 'COMPANY_WHATSAPP', '')
             
             return context
         
         # No search - regular mode
-        # Base queryset
+        # Base queryset - Filter by DISHES category type
         products_qs = Product.objects.filter(
-            is_available=True
+            is_available=True,
+            category__category_type=Category.CategoryType.DISHES
         ).select_related('category').order_by('order', '-created_at')
         
         # Apply filters
@@ -79,10 +88,8 @@ class MenuView(TemplateView):
         elif filter_type == 'promo':
             products_qs = products_qs.filter(is_promotional=True)
         
-        # Get categories
-        categories = Category.objects.filter(
-            is_active=True
-        ).order_by('order', 'name')
+        # Get categories (Only Dishes)
+        categories = Category.objects.filter(base_category_filter).order_by('order', 'name')
         
         # Group products by category
         products_by_category = OrderedDict()
@@ -126,8 +133,11 @@ class CatalogListView(ListView):
     paginate_by = 12
     
     def get_queryset(self):
+        # Filter for products that are NOT dishes (i.e. groceries)
         queryset = Product.objects.filter(
             is_available=True
+        ).exclude(
+            category__category_type=Category.CategoryType.DISHES
         ).select_related('category').order_by('order', '-created_at')
         
         # Filter by category
@@ -157,17 +167,17 @@ class CatalogListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get categories with product counts
-        cache_key = 'frontend_categories_with_counts'
-        categories = cache.get(cache_key)
+        # Get categories with product counts (excluding dishes)
+        # We don't cache this specific mixed query as easily, or we invalidate.
+        # For safety/speed update, let's fetch directly or use a different cache key if needed.
+        # Using a fresh query for correctness.
         
-        if categories is None:
-            categories = list(
-                Category.objects.filter(is_active=True)
-                .annotate(available_products_count=Count('products', filter=Q(products__is_available=True)))
-                .order_by('order', 'name')
-            )
-            cache.set(cache_key, categories, 60 * 15)
+        categories = list(
+            Category.objects.filter(is_active=True)
+            .exclude(category_type=Category.CategoryType.DISHES)
+            .annotate(available_products_count=Count('products', filter=Q(products__is_available=True)))
+            .order_by('order', 'name')
+        )
         
         context['categories'] = categories
         context['current_category'] = self.request.GET.get('category')
@@ -203,9 +213,10 @@ class CategoryDetailView(DetailView):
         context['products'] = products
         context['company_whatsapp'] = settings.COMPANY_WHATSAPP
         
-        # Get all categories for sidebar
+        # Contextual Sidebar: Show categories of the SAME TYPE
         context['categories'] = Category.objects.filter(
-            is_active=True
+            is_active=True,
+            category_type=self.object.category_type
         ).order_by('order', 'name')
         
         return context
@@ -249,9 +260,10 @@ class ProductDetailView(DetailView):
         context['company_whatsapp'] = settings.COMPANY_WHATSAPP
         context['whatsapp_url'] = self.object.get_whatsapp_order_url()
         
-        # Categories for navigation
+        # Contextual Sidebar: Show categories matching the product's category type
         context['categories'] = Category.objects.filter(
-            is_active=True
+            is_active=True,
+            category_type=self.object.category.category_type
         ).order_by('order', 'name')
         
         return context
