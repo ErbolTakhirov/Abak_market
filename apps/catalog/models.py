@@ -101,6 +101,34 @@ class Category(models.Model):
         """Number of available products in category."""
         return self.products.filter(is_available=True).count()
 
+    @property
+    def image_url(self):
+        """
+        Smart image URL: media -> static -> placeholder.
+        """
+        from django.templatetags.static import static as static_url
+        import os
+        from django.conf import settings
+
+        if self.image:
+            try:
+                # Check if it's on a remote storage (Cloudinary/S3)
+                if hasattr(self.image, 'url') and not self.image.url.startswith('/media/'):
+                    return self.image.url
+                
+                # Check if file exists in media
+                if os.path.exists(self.image.path):
+                    return self.image.url
+                
+                # Fallback to static if exists there
+                static_path = os.path.join('images', 'categories', os.path.basename(self.image.name))
+                if os.path.exists(os.path.join(settings.BASE_DIR, 'static', static_path)):
+                    return static_url(static_path)
+            except Exception:
+                pass
+        
+        return static_url('images/no-image.png')
+
 
 class Product(models.Model):
     """
@@ -288,6 +316,36 @@ class Product(models.Model):
     
     def get_absolute_url(self):
         return reverse('catalog:product', kwargs={'slug': self.slug})
+    
+    @property
+    def image_url(self):
+        """
+        Smart image URL: media -> static -> placeholder.
+        """
+        from django.templatetags.static import static as static_url
+        import os
+        from django.conf import settings
+
+        if self.image:
+            try:
+                # Check if it's on a remote storage (Cloudinary/S3)
+                if hasattr(self.image, 'url') and not self.image.url.startswith('/media/'):
+                    return self.image.url
+                
+                # Check if file exists in media locally
+                if os.path.exists(self.image.path):
+                    return self.image.url
+                
+                # Check if it's in the standard static products folder
+                # We assume filename match: media/products/xxx.jpg -> static/images/products/xxx.jpg
+                filename = os.path.basename(self.image.name)
+                static_path = os.path.join('images', 'products', filename)
+                if os.path.exists(os.path.join(settings.BASE_DIR, 'static', static_path)):
+                    return static_url(static_path)
+            except Exception:
+                pass
+        
+        return static_url('images/no-image.png')
     
     @property
     def discount_percent(self):

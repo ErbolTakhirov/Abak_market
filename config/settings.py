@@ -209,6 +209,43 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# ==============================================
+# CLOUD STORAGE (Production)
+# ==============================================
+
+# Support for Cloudinary (Highly recommended for Render)
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
+CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY', default='')
+CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET', default='')
+
+# Support for AWS S3
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com' if AWS_STORAGE_BUCKET_NAME else None
+
+# Storage Configuration (Django 4.2+)
+if not DEBUG:
+    if CLOUDINARY_STORAGE := (CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET):
+        # Use Cloudinary
+        INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+        CLOUDINARY_STORAGE = {
+            'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+            'API_KEY': CLOUDINARY_API_KEY,
+            'API_SECRET': CLOUDINARY_API_SECRET,
+        }
+    elif AWS_STORAGE := (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME):
+        # Use AWS S3
+        DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+        AWS_DEFAULT_ACL = None
+        AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    else:
+        # Fallback to local storage
+        # If on Render, files will be ephemeral UNLESS a Persistent Disk is mounted to MEDIA_ROOT
+        DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 
 # ==============================================
 # CUSTOM USER MODEL

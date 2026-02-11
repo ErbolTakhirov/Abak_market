@@ -359,12 +359,16 @@
 
             <div class="category-grid">
                 {% for category in categories %}
+                {% if category.category_type == 'dishes' %}
                 <a href="{% url 'catalog:menu' %}?category={{ category.slug }}" class="category-card-home">
-                    <div class="category-icon-home">{{ category.icon }}</div>
-                    <div class="category-name-home">{{ category.name }}</div>
-                    <div class="category-count-home">{{ category.products_count }} позиций</div>
-                </a>
-                {% endfor %}
+                    {% else %}
+                    <a href="{% url 'catalog:list' %}?category={{ category.slug }}" class="category-card-home">
+                        {% endif %}
+                        <div class="category-icon-home">{{ category.icon }}</div>
+                        <div class="category-name-home">{{ category.name }}</div>
+                        <div class="category-count-home">{{ category.products_count }} позиций</div>
+                    </a>
+                    {% endfor %}
             </div>
         </section>
         {% endif %}

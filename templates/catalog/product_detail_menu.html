@@ -16,9 +16,7 @@
     <meta property="og:description"
         content="{{ product.short_description|default:product.description|truncatewords:30 }}">
     <meta property="og:type" content="product">
-    {% if product.image %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">
-    {% endif %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image_url }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
@@ -304,13 +302,7 @@
         <!-- Product Image -->
         <header class="product-header">
             <div class="product-image-container">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
-                {% else %}
-                <div
-                    style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F5E6D3;color:#A67C52;font-size:4rem;">
-                    🍽️</div>
-                {% endif %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image-main">
             </div>
         </header>
 
@@ -338,7 +330,7 @@
             </div>
             {% endif %}
 
-                        <!-- Specific Info Grid -->
+            <!-- Specific Info Grid -->
             <div class="info-grid">
 
                 {% if product.weight %}
@@ -381,13 +373,7 @@
                     {% for related_product in related_products %}
                     <a href="{% url 'catalog:product' related_product.slug %}" class="menu-card">
                         <div class="menu-card-image">
-                            {% if related_product.image %}
-                            <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}" loading="lazy">
-                            {% else %}
-                            <div
-                                style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F5E6D3;font-size:2rem;">
-                                🍽️</div>
-                            {% endif %}
+                            <img src="{{ related_product.image_url }}" alt="{{ related_product.name }}" loading="lazy">
                         </div>
                         <div class="menu-card-content">
                             <div class="menu-card-price">{{ related_product.formatted_price }}</div>

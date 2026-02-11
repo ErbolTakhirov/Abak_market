@@ -52,19 +52,17 @@ class MenuView(TemplateView):
             # Group search results by category
             products_by_category = OrderedDict()
             for product in search_result['products']:
-                # Only show products from Dish categories in Menu search
-                if product.category.category_type == Category.CategoryType.DISHES:
-                    cat = product.category
-                    if cat not in products_by_category:
-                        products_by_category[cat] = []
-                    products_by_category[cat].append(product)
+                cat = product.category
+                if cat not in products_by_category:
+                    products_by_category[cat] = []
+                products_by_category[cat].append(product)
             
             context['categories'] = categories
             context['products_by_category'] = products_by_category
             context['current_category'] = category_slug
             context['current_filter'] = filter_type
             context['search_query'] = search_query
-            context['search_total'] = len([p for p in search_result['products'] if p.category.category_type == Category.CategoryType.DISHES])
+            context['search_total'] = search_result['total']
             context['search_suggestions'] = search_result['suggestions']
             context['company_whatsapp'] = getattr(settings, 'COMPANY_WHATSAPP', '')
             
@@ -79,6 +77,14 @@ class MenuView(TemplateView):
         
         # Apply filters
         if category_slug:
+            # Check if this category belongs to DISHES
+            target_category = Category.objects.filter(slug=category_slug, is_active=True).first()
+            if target_category and target_category.category_type != Category.CategoryType.DISHES:
+                # Redirect to Catalog list if it's a product category
+                from django.shortcuts import redirect
+                from django.urls import reverse
+                return redirect(reverse('catalog:list') + f'?category={category_slug}')
+            
             products_qs = products_qs.filter(category__slug=category_slug)
         
         if filter_type == 'popular':
@@ -121,6 +127,17 @@ class MenuView(TemplateView):
         
         return context
 
+    def get(self, request, *args, **kwargs):
+        # Override get to handle redirection before template rendering
+        category_slug = request.GET.get('category')
+        if category_slug:
+            target_category = Category.objects.filter(slug=category_slug, is_active=True).first()
+            if target_category and target_category.category_type != Category.CategoryType.DISHES:
+                from django.shortcuts import redirect
+                from django.urls import reverse
+                return redirect(reverse('catalog:list') + f'?category={category_slug}')
+        return super().get(request, *args, **kwargs)
+
 
 class CatalogListView(ListView):
     """
@@ -133,12 +150,20 @@ class CatalogListView(ListView):
     paginate_by = 12
     
     def get_queryset(self):
-        # Filter for products that are NOT dishes (i.e. groceries)
-        queryset = Product.objects.filter(
-            is_available=True
-        ).exclude(
-            category__category_type=Category.CategoryType.DISHES
-        ).select_related('category').order_by('order', '-created_at')
+        # Base filter
+        queryset = Product.objects.filter(is_available=True)
+        
+        # Search query
+        search_query = self.request.GET.get('q', '').strip()
+        
+        if not search_query:
+            # Regular mode: Filter for products that are NOT dishes (i.e. groceries)
+            queryset = queryset.exclude(
+                category__category_type=Category.CategoryType.DISHES
+            )
+        
+        # Optimize queryset
+        queryset = queryset.select_related('category').order_by('order', '-created_at')
         
         # Filter by category
         category_slug = self.request.GET.get('category')
@@ -154,12 +179,11 @@ class CatalogListView(ListView):
         elif filter_type == 'featured':
             queryset = queryset.filter(is_featured=True)
         
-        # Search
-        search = self.request.GET.get('q')
-        if search:
+        if search_query:
             queryset = queryset.filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
+                Q(name__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(short_description__icontains=search_query)
             )
         
         return queryset
@@ -186,6 +210,17 @@ class CatalogListView(ListView):
         context['company_whatsapp'] = settings.COMPANY_WHATSAPP
         
         return context
+
+    def get(self, request, *args, **kwargs):
+        # Handle redirection for Dishes categories
+        category_slug = request.GET.get('category')
+        if category_slug:
+            target_category = Category.objects.filter(slug=category_slug, is_active=True).first()
+            if target_category and target_category.category_type == Category.CategoryType.DISHES:
+                from django.shortcuts import redirect
+                from django.urls import reverse
+                return redirect(reverse('catalog:menu') + f'?category={category_slug}')
+        return super().get(request, *args, **kwargs)
 
 
 class CategoryDetailView(DetailView):

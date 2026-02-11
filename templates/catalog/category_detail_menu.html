@@ -76,10 +76,17 @@
     <div class="menu-container">
         <!-- Back link -->
         <div style="margin-bottom: var(--menu-spacing-md);">
+            {% if category.category_type == 'dishes' %}
             <a href="{% url 'catalog:menu' %}"
                 style="display: inline-flex; align-items: center; gap: 8px; color: var(--menu-accent); font-weight: 600; text-decoration: none;">
                 ← Назад к меню
             </a>
+            {% else %}
+            <a href="{% url 'catalog:list' %}"
+                style="display: inline-flex; align-items: center; gap: 8px; color: var(--menu-accent); font-weight: 600; text-decoration: none;">
+                ← Назад в каталог
+            </a>
+            {% endif %}
         </div>
 
         {% if products %}

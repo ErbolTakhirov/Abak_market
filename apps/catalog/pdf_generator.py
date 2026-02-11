@@ -108,9 +108,13 @@ class CatalogPDFGenerator:
         Returns:
             str: Path to generated PDF file
         """
-        # Create output directory
+        # Create output directory for local storage fallback
         output_dir = os.path.join(settings.MEDIA_ROOT, 'catalogs')
-        os.makedirs(output_dir, exist_ok=True)
+        if not os.path.exists(output_dir):
+            try:
+                os.makedirs(output_dir, exist_ok=True)
+            except Exception:
+                pass
         
         # Generate filename
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -206,11 +210,25 @@ class CatalogPDFGenerator:
             
             # Try to add image
             try:
-                if product.image and os.path.exists(product.image.path):
-                    img = RLImage(product.image.path, width=2*cm, height=2*cm)
+                if product.image:
+                    try:
+                        # Try local path first (faster)
+                        img_path = product.image.path
+                        if os.path.exists(img_path):
+                            img = RLImage(img_path, width=2*cm, height=2*cm)
+                        else:
+                            img = ''
+                    except (AttributeError, NotImplementedError):
+                        # Use URL for remote storage
+                        # ReportLab RLImage can take a URL if it's formatted correctly
+                        # or we could use requests to get it. 
+                        # For simplicity, we use the URL if it's external
+                        img_url = product.image.url
+                        img = RLImage(img_url, width=2*cm, height=2*cm)
                 else:
                     img = ''
-            except Exception:
+            except Exception as e:
+                logger.warning(f"Failed to add image to PDF for product {product.id}: {e}")
                 img = ''
             
             table_data.append([img, [name, desc], price])

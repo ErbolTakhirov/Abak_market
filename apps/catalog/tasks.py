@@ -115,11 +115,16 @@ def optimize_product_images():
     
     for product in products:
         try:
-            if not product.image or not os.path.exists(product.image.path):
+            # Check if storage supports local path
+            try:
+                img_path = product.image.path
+                if not os.path.exists(img_path):
+                    continue
+            except (AttributeError, NotImplementedError):
+                # Storage doesn't support local path (like Cloudinary/S3)
+                # Cloudinary usually handles optimization automatically
                 continue
             
-            # Check if already optimized (by file marker or size)
-            img_path = product.image.path
             img = Image.open(img_path)
             
             # Resize if too large

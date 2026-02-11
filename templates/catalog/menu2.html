@@ -122,11 +122,7 @@
 
                     <!-- Image -->
                     <a href="{% url 'catalog:product' product.slug %}" class="menu-card-image">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
-                        {% else %}
-                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
-                        {% endif %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
                     </a>
 
                     <!-- Content -->
@@ -146,13 +142,14 @@
                                 {{ product.formatted_price }}
 
                                 {% if product.weight %}
-                                <span class="menu-card-weight" style="font-size: 0.8rem; font-weight: normal; margin-left: auto;">{{ product.weight }}</span>
+                                <span class="menu-card-weight"
+                                    style="font-size: 0.8rem; font-weight: normal; margin-left: auto;">{{ product.weight
+                                    }}</span>
                                 {% endif %}
                             </div>
 
                             <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
-                                data-price="{{ product.price }}"
-                                data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
+                                data-price="{{ product.price }}" data-image="{{ product.image_url }}"
                                 aria-label="Добавить в корзину"
                                 style="width: 100%; padding: 12px; background: #27AE60; color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; margin-top: 12px; transition: all 0.2s ease;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"

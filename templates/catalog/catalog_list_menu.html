@@ -200,11 +200,7 @@
 
                 <!-- Image -->
                 <a href="{% url 'catalog:product' product.slug %}" class="menu-card-image">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
-                    {% else %}
-                    <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
-                    {% endif %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
                 </a>
 
                 <!-- Content -->
@@ -213,8 +209,7 @@
                         style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
                         <h3 class="menu-card-name" style="margin: 0;">{{ product.name }}</h3>
                         <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
-                            data-price="{{ product.price }}"
-                            data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
+                            data-price="{{ product.price }}" data-image="{{ product.image_url }}"
                             aria-label="Добавить в корзину">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
@@ -230,17 +225,17 @@
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <div class="menu-card-price" style="margin: 0;">
                             {% if product.old_price %}
-                                <span class="menu-card-old-price">
-                                    {{ product.formatted_old_price }}
-                                </span>
+                            <span class="menu-card-old-price">
+                                {{ product.formatted_old_price }}
+                            </span>
                             {% endif %}
                             {{ product.formatted_price }}
                         </div>
 
                         {% if product.weight %}
-                            <span class="menu-card-weight">
-                                {{ product.weight }} 
-                            </span>
+                        <span class="menu-card-weight">
+                            {{ product.weight }}
+                        </span>
                         {% endif %}
                     </div>
 

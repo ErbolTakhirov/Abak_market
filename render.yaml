@@ -35,6 +35,10 @@ services:
           name: abak_redis
           property: connectionString
     autoDeploy: true
+    disks:
+      - name: abak_media
+        mountPath: /opt/render/project/src/media
+        sizeGB: 1
 
   # 2. Celery Worker (Background tasks)
   - type: worker
