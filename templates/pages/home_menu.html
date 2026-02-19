@@ -30,6 +30,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
     <style>
         /* Additional styles for home page */
         .home-hero {
@@ -308,7 +309,7 @@
     </style>
 </head>
 
-<body class="menu-page">
+<body class="menu-page" data-whatsapp="{{ COMPANY_WHATSAPP|slice:'1:' }}">
     <!-- Hero Section -->
     <section class="home-hero">
         <div class="home-hero-content">
@@ -319,13 +320,7 @@
             </p>
 
             <!-- BUTTON DISABLED FOR NOW -->
-            <a href="javascript:void(0)" class="home-cta-btn" style="opacity: 0.7; cursor: default;">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
-                </svg>
-                Заказ в WhatsApp (скоро)
-            </a>
+            <!-- BUTTON REMOVED BY USER REQUEST -->
 
         </div>
     </section>
@@ -383,22 +378,10 @@
 
             <div class="menu-grid">
                 {% for product in popular_products|slice:":4" %}
-                <a href="{% url 'catalog:product' product.slug %}" class="menu-card">
-                    {% if product.is_promotional %}
-                    <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
-                    {% elif product.is_new %}
-                    <span class="menu-card-badge new">Новинка</span>
-                    {% elif product.is_featured %}
-                    <span class="menu-card-badge popular">Хит</span>
-                    {% endif %}
-
-                    <div class="menu-card-image">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
-                        {% else %}
-                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
-                        {% endif %}
-                    </div>
+                <div class="menu-card" id="product-popular-{{ product.id }}">
+                    <a href="{% url 'catalog:product' product.slug %}" class="menu-card-image">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+                    </a>
 
                     <div class="menu-card-content">
                         <div class="menu-card-price">
@@ -408,8 +391,17 @@
                         {% if product.weight %}
                         <span class="menu-card-weight">{{ product.weight }}</span>
                         {% endif %}
+
+                        <button class="mini-add-btn add-to-cart-btn" data-id="{{ product.id }}"
+                            data-name="{{ product.name }}" data-price="{{ product.price }}"
+                            data-image="{{ product.image_url }}" aria-label="Добавить в корзину">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
                     </div>
-                </a>
+                </div>
                 {% endfor %}
             </div>
 
@@ -429,20 +421,10 @@
 
             <div class="menu-grid">
                 {% for product in featured_products|slice:":4" %}
-                <a href="{% url 'catalog:product' product.slug %}" class="menu-card">
-                    {% if product.is_promotional %}
-                    <span class="menu-card-badge">-{{ product.discount_percent }}%</span>
-                    {% elif product.is_new %}
-                    <span class="menu-card-badge new">Новинка</span>
-                    {% endif %}
-
-                    <div class="menu-card-image">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
-                        {% else %}
-                        <img src="{% static 'images/no-image.png' %}" alt="{{ product.name }}" loading="lazy">
-                        {% endif %}
-                    </div>
+                <div class="menu-card" id="product-featured-{{ product.id }}">
+                    <a href="{% url 'catalog:product' product.slug %}" class="menu-card-image">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+                    </a>
 
                     <div class="menu-card-content">
                         <div class="menu-card-price">
@@ -452,8 +434,17 @@
                         {% if product.weight %}
                         <span class="menu-card-weight">{{ product.weight }}</span>
                         {% endif %}
+
+                        <button class="mini-add-btn add-to-cart-btn" data-id="{{ product.id }}"
+                            data-name="{{ product.name }}" data-price="{{ product.price }}"
+                            data-image="{{ product.image_url }}" aria-label="Добавить в корзину">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
                     </div>
-                </a>
+                </div>
                 {% endfor %}
             </div>
 
@@ -463,14 +454,7 @@
         </section>
         {% endif %}
 
-        <!-- WhatsApp Order Button -->
-        <a href="javascript:void(0)" class="menu-order-btn" style="opacity: 0.7; cursor: default;">
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.25rem;height:1.25rem;">
-                <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
-            </svg>
-            Заказ в WhatsApp (скоро)
-        </a>
+        <!-- WhatsApp Order Button REMOVED BY USER REQUEST -->
     </div>
 
     <!-- Footer -->
@@ -478,9 +462,8 @@
         <div class="menu-container">
             <div class="home-footer-logo">{{ COMPANY_NAME }}</div>
             <div class="home-footer-info">
-                📞 <a href="javascript:void(0)" style="cursor: default;">{{ COMPANY_PHONE }}</a><br>
-                📍 {{ COMPANY_ADDRESS }}<br>
-                💬 <a href="javascript:void(0)" style="cursor: default;">WhatsApp (скоро)</a>
+                📞 <a href="tel:{{ COMPANY_PHONE }}">{{ COMPANY_PHONE }}</a><br>
+                💬 <a href="https://wa.me/{{ COMPANY_WHATSAPP|slice:'1:' }}" target="_blank">WhatsApp</a>
             </div>
             <div class="home-footer-copy">
                 © {% now "Y" %} {{ COMPANY_NAME }}. Все права защищены.
@@ -498,9 +481,9 @@
             <span>🍽️</span>
             Меню
         </a>
-        <a href="{% url 'catalog:list' %}">
+        <a href="javascript:void(0)" class="open-cart">
             <span>🛒</span>
-            Каталог
+            Корзина
         </a>
         <a href="{% url 'contacts' %}">
             <span>📞</span>
@@ -512,6 +495,8 @@
     <!-- 
     <a href="..." class="menu-float-btn" ...></a> 
     -->
+    <!-- Shopping Cart Logic -->
+    <script src="{% static 'js/cart.js' %}"></script>
     <!-- Smart Search (autocomplete) -->
     <script src="{% static 'js/search.js' %}"></script>
 </body>

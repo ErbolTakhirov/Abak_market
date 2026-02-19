@@ -230,8 +230,13 @@ textarea {
 .menu-card-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    /* Show full image */
+    background: #fff;
+    padding: 12px;
+    /* Add some breathing room */
     transition: transform 0.3s ease;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .menu-card:hover .menu-card-image img {
@@ -263,16 +268,21 @@ textarea {
 /* Card Content */
 .menu-card-content {
     padding: var(--menu-spacing-md);
-    text-align: center;
+    text-align: left;
+    /* Align left for better readability */
+    display: flex;
+    flex-direction: column;
+    gap: var(--menu-spacing-xs);
 }
 
 /* Price - Large and Bold */
 .menu-card-price {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+    /* Larger price */
     font-weight: 800;
     color: var(--menu-text-dark);
-    margin-bottom: var(--menu-spacing-xs);
-    line-height: 1.2;
+    margin: 0;
+    line-height: 1.1;
 }
 
 .menu-card-price .currency {
@@ -290,17 +300,24 @@ textarea {
 
 /* Product Name - Bold */
 .menu-card-name {
-    font-size: 0.9375rem;
+    font-size: 1.05rem;
+    /* Slightly larger name */
     font-weight: 700;
     color: var(--menu-text-dark);
-    margin-bottom: var(--menu-spacing-xs);
+    margin: 0;
     line-height: 1.3;
-    min-height: 2.6em;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 2.7em;
+}
+
+.menu-card-price-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 /* Weight/Volume - Gray */
@@ -308,6 +325,73 @@ textarea {
     font-size: 0.8125rem;
     color: var(--menu-text-light);
     font-weight: 400;
+}
+
+/* Add to Cart Button - Global */
+.menu-card-add-btn {
+    margin-top: var(--menu-spacing-sm);
+    background: var(--menu-accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(196, 149, 106, 0.2);
+}
+
+.menu-card-add-btn:active {
+    transform: scale(0.96);
+    background: var(--menu-accent-dark);
+}
+
+/* Mini Add Button (for home page or compact views) */
+.mini-add-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: var(--menu-accent);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(196, 149, 106, 0.3);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 5;
+    padding: 0;
+}
+
+.mini-add-btn:hover {
+    transform: scale(1.1);
+    background: var(--menu-accent-dark);
+}
+
+.mini-add-btn:active {
+    transform: scale(0.9);
+}
+
+.mini-add-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 3;
+}
+
+/* Ensure card content has space for absolute button */
+.menu-card-content {
+    position: relative;
+    padding-right: 50px !important;
+    /* Space for the button */
 }
 
 /* ==============================================
@@ -542,18 +626,9 @@ textarea {
         text-align: left;
     }
 
-    /* Кнопка "В корзину" (зеленая) */
+    /* Кнопка "В корзину" на десктопе унаследует глобальные стили */
     .menu-card-add-btn {
         margin-top: auto;
-        background: #27AE60;
-        color: white;
-        border-radius: 8px;
-        padding: 8px;
-        text-align: center;
-        font-weight: bold;
-        cursor: pointer;
-        display: block;
-        /* Force show */
     }
 }
 

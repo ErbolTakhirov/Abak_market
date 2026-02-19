@@ -279,7 +279,7 @@
     </style>
 </head>
 
-<body class="menu-page">
+<body class="menu-page" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
     <div class="product-page-wrapper">
         <!-- Fixed Top Header with Back & Search -->
         <div class="top-header-fixed">
@@ -387,23 +387,25 @@
         {% endif %}
 
         <!-- Fixed Order Bar -->
-        <div class="order-bar-fixed">
+        <div class="order-bar-fixed" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
             <div style="flex-shrink:0;">
                 <div style="font-size: 1.25rem; font-weight: 900; color: var(--menu-text-dark);">
                     {{ product.formatted_price }}
                 </div>
                 <div style="font-size: 0.75rem; color: var(--menu-text-light);">{{ product.weight|default:'' }}</div>
             </div>
-            <a href="javascript:void(0)" class="btn-order-disabled">
+            <button class="menu-order-btn add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                data-price="{{ product.price }}" data-image="{{ product.image_url }}" style="margin: 0; flex: 1;">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="21" r="1"></circle>
                     <circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                Скоро в продаже
-            </a>
+                В корзину
+            </button>
         </div>
+        <script src="{% static 'js/cart.js' %}"></script>
     </div>
 
     <!-- Smart Search (autocomplete) -->

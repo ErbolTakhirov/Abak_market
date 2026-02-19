@@ -43,12 +43,17 @@ class ShoppingCart {
                 this.addItem(product);
 
                 // Visual feedback
-                const originalIcon = btn.innerHTML;
-                btn.innerHTML = '✅';
+                const isMini = btn.classList.contains('mini-add-btn');
+                const originalContent = btn.innerHTML;
+
+                btn.innerHTML = isMini ? '✅' : '✅ Добавлено!';
                 btn.style.background = '#27ae60';
+                btn.style.borderColor = '#27ae60';
+
                 setTimeout(() => {
-                    btn.innerHTML = originalIcon;
+                    btn.innerHTML = originalContent;
                     btn.style.background = '';
+                    btn.style.borderColor = '';
                 }, 1000);
             }
         });

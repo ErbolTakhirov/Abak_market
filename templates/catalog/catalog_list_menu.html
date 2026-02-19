@@ -205,40 +205,26 @@
 
                 <!-- Content -->
                 <div class="menu-card-content">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
-                        <h3 class="menu-card-name" style="margin: 0;">{{ product.name }}</h3>
-                        <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
-                            data-price="{{ product.price }}" data-image="{{ product.image_url }}"
-                            aria-label="Добавить в корзину">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                <line x1="12" y1="9" x2="12" y2="15"></line>
-                                <line x1="9" y1="12" x2="15" y2="12"></line>
-                            </svg>
-                        </button>
-                    </div>
+                    <h3 class="menu-card-name">{{ product.name }}</h3>
 
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div class="menu-card-price" style="margin: 0;">
+                    <div class="menu-card-price-row">
+                        <div class="menu-card-price">
                             {% if product.old_price %}
-                            <span class="menu-card-old-price">
-                                {{ product.formatted_old_price }}
-                            </span>
+                            <span class="menu-card-old-price">{{ product.formatted_old_price }}</span>
                             {% endif %}
-                            {{ product.formatted_price }}
+                            <span class="price-current">{{ product.formatted_price }}</span>
                         </div>
 
                         {% if product.weight %}
-                        <span class="menu-card-weight">
-                            {{ product.weight }}
-                        </span>
+                        <span class="menu-card-weight">{{ product.weight }}</span>
                         {% endif %}
                     </div>
 
+                    <button class="menu-card-add-btn add-to-cart-btn" data-id="{{ product.id }}"
+                        data-name="{{ product.name }}" data-price="{{ product.price }}"
+                        data-image="{{ product.image_url }}">
+                        В корзину
+                    </button>
                 </div>
             </div>
             {% endfor %}
