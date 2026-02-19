@@ -224,14 +224,22 @@ class ShoppingCart {
     checkoutWhatsApp() {
         if (this.cart.length === 0) return;
 
-        let message = `🛒 *Новый заказ из Abak Market*\n\n`;
+        let message = `🛍️ *НОВЫЙ ЗАКАЗ: ABAK MARKET*\n`;
+        message += `──────────────────\n\n`;
+
         this.cart.forEach((item, index) => {
-            message += `${index + 1}. *${item.name}*\n`;
-            message += `   ${item.qty} шт. × ${item.price} с = ${item.qty * item.price} с\n\n`;
+            const itemTotal = item.qty * item.price;
+            message += `📦 *${item.name}*\n`;
+            message += `   • Кол-во: ${item.qty} шт.\n`;
+            message += `   • Цена: ${item.price.toLocaleString()} с\n`;
+            message += `   • Сумма: *${itemTotal.toLocaleString()} с*\n\n`;
         });
 
         const total = this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        message += `💰 *Итого: ${total} с*`;
+
+        message += `──────────────────\n`;
+        message += `💰 *ИТОГО К ОПЛАТЕ: ${total.toLocaleString()} с*\n\n`;
+        message += `👋 *Спасибо за выбор Abak Market! Ожидаю подтверждения заказа.*`;
 
         const encodedMsg = encodeURIComponent(message);
         const url = `https://wa.me/${this.whatsappNumber}?text=${encodedMsg}`;
