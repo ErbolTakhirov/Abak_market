@@ -383,7 +383,7 @@ class Product(models.Model):
         from django.conf import settings
         from urllib.parse import quote
         
-        message = f"👋 Здравствуйте! Хочу заказать:\n\n🛍️ *{self.name}*\n💰 Цена: {self.formatted_price}\n\nОжидаю подтверждения! 🙏"
+        message = f"{self.name}\nЦена: {self.formatted_price}"
         phone = settings.COMPANY_WHATSAPP.replace('+', '')
         
         return f"https://wa.me/{phone}?text={quote(message)}"
