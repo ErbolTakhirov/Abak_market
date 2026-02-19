@@ -384,20 +384,21 @@
                     </a>
 
                     <div class="menu-card-content">
-                        <div class="menu-card-price">
-                            {{ product.formatted_price }}
+                        <div class="menu-card-info">
+                            <h3 class="menu-card-name">{{ product.name }}</h3>
+                            <div class="menu-card-price">{{ product.formatted_price }}</div>
+                            {% if product.weight %}
+                            <span class="menu-card-weight">{{ product.weight }}</span>
+                            {% endif %}
                         </div>
-                        <h3 class="menu-card-name">{{ product.name }}</h3>
-                        {% if product.weight %}
-                        <span class="menu-card-weight">{{ product.weight }}</span>
-                        {% endif %}
 
-                        <button class="mini-add-btn add-to-cart-btn" data-id="{{ product.id }}"
-                            data-name="{{ product.name }}" data-price="{{ product.price }}"
-                            data-image="{{ product.image_url }}" aria-label="Добавить в корзину">
+                        <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                            data-price="{{ product.price }}" data-image="{{ product.image_url }}"
+                            aria-label="Добавить в корзину">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                             </svg>
                         </button>
                     </div>
@@ -427,20 +428,21 @@
                     </a>
 
                     <div class="menu-card-content">
-                        <div class="menu-card-price">
-                            {{ product.formatted_price }}
+                        <div class="menu-card-info">
+                            <h3 class="menu-card-name">{{ product.name }}</h3>
+                            <div class="menu-card-price">{{ product.formatted_price }}</div>
+                            {% if product.weight %}
+                            <span class="menu-card-weight">{{ product.weight }}</span>
+                            {% endif %}
                         </div>
-                        <h3 class="menu-card-name">{{ product.name }}</h3>
-                        {% if product.weight %}
-                        <span class="menu-card-weight">{{ product.weight }}</span>
-                        {% endif %}
 
-                        <button class="mini-add-btn add-to-cart-btn" data-id="{{ product.id }}"
-                            data-name="{{ product.name }}" data-price="{{ product.price }}"
-                            data-image="{{ product.image_url }}" aria-label="Добавить в корзину">
+                        <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                            data-price="{{ product.price }}" data-image="{{ product.image_url }}"
+                            aria-label="Добавить в корзину">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                             </svg>
                         </button>
                     </div>

@@ -207,7 +207,8 @@ class CatalogListView(ListView):
         context['current_category'] = self.request.GET.get('category')
         context['current_filter'] = self.request.GET.get('filter')
         context['search_query'] = self.request.GET.get('q', '')
-        context['company_whatsapp'] = settings.COMPANY_WHATSAPP
+        context['company_whatsapp'] = getattr(settings, 'COMPANY_WHATSAPP', '')
+        context['COMPANY_WHATSAPP'] = getattr(settings, 'COMPANY_WHATSAPP', '')
         
         return context
 
