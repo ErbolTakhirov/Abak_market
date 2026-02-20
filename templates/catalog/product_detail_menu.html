@@ -28,8 +28,8 @@
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.7">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.3">
     <style>
         /* Premium Product Detail Styles */
         .product-page-wrapper {
@@ -409,7 +409,8 @@
                 <div style="font-size: 0.75rem; color: var(--menu-text-light);">{{ product.weight|default:'' }}</div>
             </div>
             <button class="menu-order-btn add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
-                data-price="{{ product.price }}" data-image="{{ product.image_url }}" style="margin: 0; flex: 1;">
+                data-price="{{ product.price }}" data-image="{{ product.image_url }}" style="margin: 0; flex: 1;"
+                onclick="if(window.toggleCart) toggleCart(true)">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="21" r="1"></circle>
@@ -419,7 +420,7 @@
                 В корзину
             </button>
         </div>
-        <script src="{% static 'js/cart.js' %}?v=1.2"></script>
+        <script src="{% static 'js/cart.js' %}?v=1.3"></script>
     </div>
 
     <!-- Smart Search (autocomplete) -->

@@ -5,11 +5,22 @@
 
 class ShoppingCart {
     constructor() {
-        this.cart = JSON.parse(localStorage.getItem('abak_cart')) || [];
-        this.whatsappNumber = document.body.dataset.whatsapp || '996700000000';
-        this.init();
-        // Force version update
-        console.log('Cart Logic v1.2 Initialized');
+        try {
+            this.cart = JSON.parse(localStorage.getItem('abak_cart')) || [];
+            this.whatsappNumber = document.body.dataset.whatsapp || '996700000000';
+
+            // Expose global toggle IMMEDIATELY
+            window.toggleCart = (active) => this.toggleCart(active);
+
+            this.init();
+            console.log('Cart Logic v1.3 Initialized - OK');
+        } catch (e) {
+            console.error('Cart Init Error:', e);
+            // Emergency fallback for the user to see if it's failing
+            if (window.location.search.includes('debug=1')) {
+                alert('Cart Error: ' + e.message);
+            }
+        }
     }
 
     init() {
@@ -36,8 +47,7 @@ class ShoppingCart {
             }
         });
 
-        // Add a global method for direct calls
-        window.toggleCart = (active) => this.toggleCart(active);
+        // Global toggle is now in constructor for earlier availability
 
         // Add to cart buttons
         document.addEventListener('click', (e) => {
@@ -269,6 +279,8 @@ class ShoppingCart {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { window.cart = new ShoppingCart(); });
+} else {
     window.cart = new ShoppingCart();
-});
+}
