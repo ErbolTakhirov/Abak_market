@@ -484,7 +484,7 @@
             <span>🍽️</span>
             Меню
         </a>
-        <a href="javascript:void(0)" class="open-cart">
+        <a href="javascript:void(0)" class="open-cart" onclick="if(window.toggleCart) toggleCart(true)">
             <span>🛒</span>
             Корзина
         </a>
@@ -499,7 +499,7 @@
     <a href="..." class="menu-float-btn" ...></a> 
     -->
     <!-- Shopping Cart Logic -->
-    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}?v=1.2"></script>
     <!-- Smart Search (autocomplete) -->
     <script src="{% static 'js/search.js' %}"></script>
 </body>

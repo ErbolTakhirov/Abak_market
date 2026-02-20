@@ -274,7 +274,7 @@
         {% endif %}
 
         <!-- Order Button -->
-        <button class="menu-order-btn open-cart">
+        <button class="menu-order-btn open-cart" onclick="if(window.toggleCart) toggleCart(true)">
             <span style="font-size: 1.25rem; margin-right: 8px;">🛒</span>
             Открыть корзину
         </button>
@@ -290,7 +290,7 @@
             <span>🍽️</span>
             Меню
         </a>
-        <a href="#" class="open-cart">
+        <a href="#" class="open-cart" onclick="if(window.toggleCart) toggleCart(true)">
             <span>🛒</span>
             Корзина
         </a>
@@ -300,7 +300,7 @@
         </a>
     </nav>
 
-    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}?v=1.2"></script>
 
     <!-- AJAX Filter Script -->
     <script>

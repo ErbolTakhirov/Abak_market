@@ -8,6 +8,8 @@ class ShoppingCart {
         this.cart = JSON.parse(localStorage.getItem('abak_cart')) || [];
         this.whatsappNumber = document.body.dataset.whatsapp || '996700000000';
         this.init();
+        // Force version update
+        console.log('Cart Logic v1.2 Initialized');
     }
 
     init() {
@@ -20,13 +22,22 @@ class ShoppingCart {
     bindEvents() {
         // Toggle cart drawer
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.cart-float-btn') || e.target.closest('.open-cart')) {
+            const btn = e.target.closest('.cart-float-btn') || e.target.closest('.open-cart');
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
                 this.toggleCart(true);
             }
-            if (e.target.closest('.cart-close') || (e.target.classList.contains('cart-overlay') && !e.target.closest('.cart-drawer'))) {
+
+            const closeBtn = e.target.closest('.cart-close');
+            const overlay = e.target.classList.contains('cart-overlay');
+            if (closeBtn || (overlay && !e.target.closest('.cart-drawer'))) {
                 this.toggleCart(false);
             }
         });
+
+        // Add a global method for direct calls
+        window.toggleCart = (active) => this.toggleCart(active);
 
         // Add to cart buttons
         document.addEventListener('click', (e) => {
@@ -149,8 +160,16 @@ class ShoppingCart {
     }
 
     toggleCart(active) {
-        document.querySelector('.cart-overlay')?.classList.toggle('active', active);
-        if (active) this.renderCartItems();
+        const overlay = document.querySelector('.cart-overlay');
+        if (overlay) {
+            overlay.classList.toggle('active', active);
+            if (active) {
+                this.renderCartItems();
+                document.body.style.overflow = 'hidden'; // Prevent scroll
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
     }
 
     renderFloatButton() {
