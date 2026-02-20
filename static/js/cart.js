@@ -43,7 +43,7 @@ class ShoppingCart {
                 this.addItem(product);
 
                 // Visual feedback
-                const isMini = btn.classList.contains('mini-add-btn');
+                const isMini = btn.offsetWidth < 100; // Small circular button is ~38-50px
                 const originalContent = btn.innerHTML;
 
                 btn.innerHTML = isMini ? '✅' : '✅ Добавлено!';
@@ -229,19 +229,19 @@ class ShoppingCart {
     checkoutWhatsApp() {
         if (this.cart.length === 0) return;
 
-        let message = ``;
+        let message = `🛒 *НОВЫЙ ЗАКАЗ — ABAK MARKET*\n`;
+        message += `--------------------------------\n\n`;
 
         this.cart.forEach((item, index) => {
             const itemTotal = item.qty * item.price;
-            message += `${item.name}\n`;
-            message += `   • Кол-во: ${item.qty} шт.\n`;
-            message += `   • Цена: ${item.price.toLocaleString()} с\n`;
-            message += `   • Сумма: ${itemTotal.toLocaleString()} с\n\n`;
+            message += `🔹 *${item.name}*\n`;
+            message += `   ${item.qty} шт. x ${item.price.toLocaleString()} с = *${itemTotal.toLocaleString()} с*\n\n`;
         });
 
         const total = this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-        message += `ИТОГО К ОПЛАТЕ: ${total.toLocaleString()} с`;
+        message += `--------------------------------\n`;
+        message += `💰 *ИТОГО К ОПЛАТЕ: ${total.toLocaleString()} с*`;
 
         const encodedMsg = encodeURIComponent(message);
         const url = `https://wa.me/${this.whatsappNumber}?text=${encodedMsg}`;

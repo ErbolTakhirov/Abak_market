@@ -12,24 +12,27 @@
     <meta name="description" content="Контактная информация {{ COMPANY_NAME }}. Адрес, телефон, WhatsApp.">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
     <style>
         /* Contacts page styles */
         .contacts-header {
             background: linear-gradient(135deg, var(--menu-accent) 0%, var(--menu-accent-dark) 100%);
-            padding: var(--menu-spacing-xl) 0;
-            text-align: center;
-            color: white;
+            padding: var(--menu-spacing-md) var(--menu-spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 70px;
         }
 
         .contacts-header h1 {
@@ -223,20 +226,9 @@
 </head>
 
 <body class="menu-page">
-    <!-- Header -->
-    <header class="contacts-header">
-        <h1>📞 Контакты</h1>
-    </header>
+    <div class="menu-container contacts-content" style="padding-top: 30px;">
+        <!-- No Header or Search Bar per user request -->
 
-    <div class="menu-container contacts-content">
-        <!-- Search Bar -->
-        <div class="search-container" style="margin-bottom: 30px;">
-            <span class="search-icon">🔍</span>
-            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
-                <input type="text" name="q" class="search-input" placeholder="Найти блюдо или продукт..."
-                    autocomplete="off">
-            </form>
-        </div>
 
         <!-- WhatsApp Card -->
         <div class="contact-card whatsapp">

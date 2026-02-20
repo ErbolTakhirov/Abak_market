@@ -18,18 +18,18 @@
     <meta property="og:type" content="product">
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image_url }}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
     <style>
         /* Premium Product Detail Styles */
         .product-page-wrapper {
@@ -114,7 +114,7 @@
         }
 
         .product-page-wrapper {
-            padding-top: 64px;
+            padding-top: 0;
         }
 
         .product-image-container {
@@ -281,23 +281,26 @@
 
 <body class="menu-page" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
     <div class="product-page-wrapper">
-        <!-- Fixed Top Header with Back & Search -->
-        <div class="top-header-fixed">
-            <a href="javascript:history.back()" class="header-back-btn">
+        <header class="menu-header">
+            <a href="javascript:history.back()" class="header-back">
                 <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
             </a>
-            <div class="header-search-wrapper">
-                <span class="header-search-icon">🔍</span>
-                <form action="{% url 'catalog:menu' %}" method="GET" style="flex: 1;">
-                    <input type="text" name="q" class="header-search-input" placeholder="Найти что-то еще..."
-                        autocomplete="off">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/Abak_Market-removebg-preview.png' %}" alt="{{ COMPANY_NAME }}"
+                    class="site-logo">
+            </a>
+
+            <!-- Header Search -->
+            <div class="header-search">
+                <form action="{% url 'catalog:menu' %}" method="GET">
+                    <input type="text" name="q" placeholder="Найти..." autocomplete="off">
                 </form>
             </div>
-        </div>
+        </header>
 
         <!-- Product Image -->
         <header class="product-header">
@@ -376,8 +379,19 @@
                             <img src="{{ related_product.image_url }}" alt="{{ related_product.name }}" loading="lazy">
                         </div>
                         <div class="menu-card-content">
-                            <div class="menu-card-price">{{ related_product.formatted_price }}</div>
-                            <h3 class="menu-card-name">{{ related_product.name }}</h3>
+                            <div class="menu-card-info">
+                                <h3 class="menu-card-name">{{ related_product.name }}</h3>
+                                <div class="menu-card-price">{{ related_product.formatted_price }}</div>
+                            </div>
+                            <button class="add-to-cart-btn" data-id="{{ related_product.id }}"
+                                data-name="{{ related_product.name }}" data-price="{{ related_product.price }}"
+                                data-image="{{ related_product.image_url }}" aria-label="Добавить в корзину">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                            </button>
                         </div>
                     </a>
                     {% endfor %}

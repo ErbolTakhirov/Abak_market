@@ -19,18 +19,18 @@
     <meta property="og:locale" content="ru_RU">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
     <style>
         /* Additional styles for home page */
         .home-hero {
@@ -313,7 +313,9 @@
     <!-- Hero Section -->
     <section class="home-hero">
         <div class="home-hero-content">
-            <h1 class="home-logo">{{ COMPANY_NAME }}</h1>
+            <img src="{% static 'images/Abak_Market-removebg-preview.png' %}" alt="{{ COMPANY_NAME }}"
+                class="site-logo home-logo-img">
+            <h1 class="home-logo" style="display:none;">{{ COMPANY_NAME }}</h1>
             <p class="home-tagline">
                 Свежие продукты и готовые блюда.<br>
                 Закажите онлайн!
@@ -328,7 +330,6 @@
     <div class="menu-container">
         <!-- Search Bar -->
         <div class="search-container" style="margin-top: -25px; margin-bottom: 30px;">
-            <span class="search-icon">🔍</span>
             <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
                 <input type="text" name="q" class="search-input" placeholder="Что вы хотите заказать сегодня?"
                     autocomplete="off">

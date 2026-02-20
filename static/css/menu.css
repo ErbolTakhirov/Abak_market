@@ -3,25 +3,31 @@
    Premium Restaurant/Cafe Menu Design
    ============================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
 /* ==============================================
-   MENU VARIABLES
+   DESIGN TOKENS & RESET
    ============================================== */
 :root {
     /* Warm Restaurant Colors */
-    --menu-bg: #E8D4B8;
-    --menu-bg-light: #F5E6D3;
+    --menu-bg: #F0E0CA;
+    /* Brightened from #E8D4B8 */
+    --menu-bg-light: #FBF3E8;
+    /* Brightened from #F5E6D3 */
     --menu-card-bg: #ffffff;
     --menu-text-dark: #2C1810;
     --menu-text-medium: #5C4033;
     --menu-text-light: #8B7355;
-    --menu-accent: #C4956A;
-    --menu-accent-dark: #A67C52;
-    --menu-border: #D4C4A8;
-    --menu-shadow: rgba(139, 115, 85, 0.15);
+    --menu-accent: #D4A373;
+    /* Brightened from #C4956A */
+    --menu-accent-dark: #B98A5B;
+    /* Brightened from #A67C52 */
+    --menu-border: #E5D5B8;
+    --menu-shadow: rgba(139, 115, 85, 0.12);
 
     /* Typography */
-    --menu-font: 'Inter', system-ui, -apple-system, sans-serif;
-    --menu-font-display: 'Inter', 'Playfair Display', serif;
+    --menu-font: 'Montserrat', system-ui, -apple-system, sans-serif;
+    --menu-font-display: 'Montserrat', serif;
     /* Use Inter as fallback for display too */
 
     /* Spacing */
@@ -77,32 +83,105 @@ textarea {
    MENU HEADER
    ============================================== */
 .menu-header {
-    text-align: center;
-    padding: var(--menu-spacing-lg) 0;
+    display: flex;
+    align-items: center;
+    /* Vertical center */
+    justify-content: space-between;
+    /* Logo left, Search right */
+    padding: 10px 15px;
+    /* Compact padding */
     background: var(--menu-accent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: var(--menu-spacing-md);
+    margin-bottom: var(--menu-spacing-xs);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    border-radius: 0 0 15px 15px;
+    /* Less smooth, more structured */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: 70px;
+    /* Smaller height */
 }
+
+/* Header Search Styles */
+.header-search {
+    flex: 1;
+    max-width: 250px;
+    position: relative;
+    margin-left: 10px;
+}
+
+.header-search input {
+    width: 100%;
+    padding: 8px 15px;
+    /* More horizontal padding, no icon space */
+    border-radius: 100px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    font-family: var(--menu-font);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.header-search input:focus {
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
 
 .menu-header h1 {
-    font-family: var(--menu-font-display);
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--menu-card-bg);
-    margin: 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: none;
+    /* Hide text if logo is present, or keep both? Let's hide text */
 }
 
-.menu-header .subtitle {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-top: var(--menu-spacing-xs);
+.site-logo {
+    max-height: 180px;
+    width: auto;
+    max-width: 95%;
+    margin: 0 auto var(--menu-spacing-md);
+    display: block;
 }
+
+.menu-header .site-logo,
+.contacts-header .site-logo {
+    max-height: 70px;
+    /* Larger for header */
+    /* Smaller for header */
+    margin: 0;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.menu-header .site-logo:active {
+    transform: scale(0.95);
+}
+
+.home-logo-img {
+    max-height: 180px;
+    /* Hero section size */
+    margin-top: var(--menu-spacing-md);
+}
+
+.header-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.header-back:active {
+    transform: scale(0.9);
+}
+
 
 /* ==============================================
    CATEGORY NAVIGATION
@@ -204,24 +283,53 @@ textarea {
    PRODUCT CARD - Restaurant Style
    ============================================== */
 .menu-card {
-    background: #ffffff;
-    /* Explicit white background */
+    background: var(--menu-card-bg);
     border-radius: var(--menu-radius);
     overflow: hidden;
+    position: relative;
     box-shadow: 0 4px 15px var(--menu-shadow);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-decoration: none;
     display: flex;
-    /* Better for height handling */
     flex-direction: column;
-    height: auto;
-    min-height: 280px;
-    /* Ensure enough height for content */
+    animation: cardAppear 0.6s backwards;
 }
 
 .menu-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(139, 115, 85, 0.25);
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(139, 115, 85, 0.2);
+}
+
+.menu-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.menu-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.menu-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.menu-card:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.menu-card:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.menu-card:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.menu-card:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.menu-card:nth-child(8) {
+    animation-delay: 0.4s;
 }
 
 /* Card Image */
@@ -237,10 +345,8 @@ textarea {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* Show full image */
     background: #fff;
     padding: 12px;
-    /* Add some breathing room */
     transition: transform 0.3s ease;
     image-rendering: -webkit-optimize-contrast;
 }
@@ -261,6 +367,7 @@ textarea {
     font-weight: 700;
     border-radius: var(--menu-radius-sm);
     text-transform: uppercase;
+    z-index: 10;
 }
 
 .menu-card-badge.new {
@@ -277,10 +384,11 @@ textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* Center button with text block */
     gap: 8px;
     background: #fff;
     color: var(--menu-text-dark);
+    flex: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .menu-card-info {
@@ -288,6 +396,7 @@ textarea {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-width: 0;
 }
 
 /* Price - Large and Bold */
@@ -299,17 +408,12 @@ textarea {
     margin: 0;
 }
 
-.menu-card-price .currency {
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-/* Old price for discounts */
 .menu-card-old-price {
     font-size: 0.875rem;
     color: var(--menu-text-light);
     text-decoration: line-through;
-    margin-right: var(--menu-spacing-xs);
+    margin-bottom: 2px;
+    display: block;
 }
 
 /* Product Name - Bold */
@@ -327,12 +431,6 @@ textarea {
     min-height: 2.4em;
 }
 
-.menu-card-price-row {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
 /* Weight/Volume - Gray */
 .menu-card-weight {
     font-size: 0.8125rem;
@@ -345,12 +443,10 @@ textarea {
     width: 38px;
     height: 38px;
     min-width: 38px;
-    background: #27AE60;
-    /* Green like in the screenshot */
+    background: #25D366;
     color: white;
     border: none;
-    border-radius: 10px;
-    /* Slightly rounded square or circle */
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -362,7 +458,7 @@ textarea {
 
 .add-to-cart-btn:hover {
     transform: scale(1.1);
-    background: #219150;
+    background: #128C7E;
 }
 
 .add-to-cart-btn:active {
@@ -822,4 +918,16 @@ body {
 .menu-page::-webkit-scrollbar-thumb {
     background: var(--menu-accent);
     border-radius: 3px;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }

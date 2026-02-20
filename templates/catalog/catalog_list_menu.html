@@ -12,18 +12,18 @@
     <meta name="description" content="Каталог товаров {{ COMPANY_NAME }}. Свежие продукты и готовые блюда.">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=1.5">
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
     <style>
         /* Search bar styling */
         .catalog-search {
@@ -156,19 +156,22 @@
 <body class="menu-page" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
     <!-- Header -->
     <header class="menu-header">
-        <h1>{{ COMPANY_NAME }}</h1>
-        <p class="subtitle">Каталог товаров</p>
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/Abak_Market-removebg-preview.png' %}" alt="{{ COMPANY_NAME }}"
+                class="site-logo">
+        </a>
+
+        <!-- Header Search -->
+        <div class="header-search">
+            <form action="{% url 'catalog:list' %}" method="GET">
+                <input type="text" name="q" placeholder="Поиск товаров..." value="{{ search_query|default:'' }}"
+                    autocomplete="off">
+            </form>
+        </div>
     </header>
 
     <div class="menu-container">
-        <!-- Search -->
-        <div class="catalog-search">
-            <form class="catalog-search-form" action="{% url 'catalog:list' %}" method="get">
-                <input type="text" name="q" placeholder="Поиск товаров..." value="{{ search_query }}"
-                    class="catalog-search-input">
-                <button type="submit" class="catalog-search-btn">🔍</button>
-            </form>
-        </div>
+        <!-- Search Results (hidden here, using header search) -->
 
         <!-- Category Navigation -->
         <nav class="menu-nav">
@@ -207,7 +210,12 @@
                 <div class="menu-card-content">
                     <div class="menu-card-info">
                         <h3 class="menu-card-name">{{ product.name }}</h3>
-                        <div class="menu-card-price">{{ product.formatted_price }}</div>
+                        <div class="menu-card-price">
+                            {% if product.old_price %}
+                            <span class="menu-card-old-price">{{ product.formatted_old_price }}</span>
+                            {% endif %}
+                            {{ product.formatted_price }}
+                        </div>
                         {% if product.weight %}
                         <span class="menu-card-weight">{{ product.weight }}</span>
                         {% endif %}
@@ -216,7 +224,8 @@
                     <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
                         data-price="{{ product.price }}" data-image="{{ product.image_url }}"
                         aria-label="Добавить в корзину">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
                             <circle cx="9" cy="21" r="1"></circle>
                             <circle cx="20" cy="21" r="1"></circle>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>

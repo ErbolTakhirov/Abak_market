@@ -19,40 +19,42 @@
     <meta property="og:locale" content="ru_RU">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Abak_Market-removebg-preview.png' %}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=1.1">
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}?v=2.6">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1.1">
 </head>
 
 <body class="menu-page" data-whatsapp="{{ company_whatsapp|slice:'1:' }}">
     <!-- Header -->
     <header class="menu-header">
-        <h1>{{ COMPANY_NAME }}</h1>
-        <p class="subtitle">Меню</p>
-    </header>
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/Abak_Market-removebg-preview.png' %}" alt="{{ COMPANY_NAME }}"
+                class="site-logo">
+        </a>
 
-    <div class="menu-container">
-        <!-- Search Bar -->
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <form action="{% url 'catalog:menu' %}" method="GET" style="width: 100%;">
-                <input type="text" name="q" class="search-input" placeholder="Поиск товаров..."
-                    value="{{ search_query }}" autocomplete="off">
+        <!-- Header Search -->
+        <div class="header-search">
+            <form action="{% url 'catalog:menu' %}" method="GET">
+                <input type="text" name="q" placeholder="Поиск товаров..." value="{{ search_query|default:'' }}"
+                    autocomplete="off">
                 {% if current_category %}
                 <input type="hidden" name="category" value="{{ current_category }}">
                 {% endif %}
             </form>
         </div>
+    </header>
 
+    <div class="menu-container">
+        <!-- Search Results (only shown if searching) -->
         {% if search_query %}
         <!-- Search Results Header -->
         <div style="margin-bottom: 20px; padding: 15px; background: #f8f4ef; border-radius: 12px;">
@@ -107,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Products Grid -->
             <div class="menu-grid">
                 {% for product in products %}
                 <div class="menu-card" id="product-{{ product.id }}">
@@ -127,42 +128,29 @@
 
                     <!-- Content -->
                     <div class="menu-card-content">
-                        <!-- Title (Top) -->
-                        <h3 class="menu-card-name">{{ product.name }}</h3>
-
-                        <!-- Weight/Description code removed to keep it cleaner, weight is below with price -->
-
-                        <!-- Price & Button (Bottom) -->
-                        <div style="margin-top: auto;">
-
+                        <div class="menu-card-info">
+                            <h3 class="menu-card-name">{{ product.name }}</h3>
                             <div class="menu-card-price">
                                 {% if product.old_price %}
                                 <span class="menu-card-old-price">{{ product.formatted_old_price }}</span>
                                 {% endif %}
                                 {{ product.formatted_price }}
-
-                                {% if product.weight %}
-                                <span class="menu-card-weight"
-                                    style="font-size: 0.8rem; font-weight: normal; margin-left: auto;">{{ product.weight
-                                    }}</span>
-                                {% endif %}
                             </div>
-
-                            <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
-                                data-price="{{ product.price }}" data-image="{{ product.image_url }}"
-                                aria-label="Добавить в корзину"
-                                style="width: 100%; padding: 12px; background: #27AE60; color: white; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; margin-top: 12px; transition: all 0.2s ease;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                    <line x1="12" y1="9" x2="12" y2="15"></line>
-                                    <line x1="9" y1="12" x2="15" y2="12"></line>
-                                </svg>
-                                В корзину
-                            </button>
+                            {% if product.weight %}
+                            <span class="menu-card-weight">{{ product.weight }}</span>
+                            {% endif %}
                         </div>
+
+                        <button class="add-to-cart-btn" data-id="{{ product.id }}" data-name="{{ product.name }}"
+                            data-price="{{ product.price }}" data-image="{{ product.image_url }}"
+                            aria-label="Добавить в корзину">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
